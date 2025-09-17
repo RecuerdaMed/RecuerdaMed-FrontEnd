@@ -60,3 +60,16 @@ export const createDrug = async (drugData) => {
 
 /* Marcar medicación como tomada
 Endpoint esperado: PUT /api/drugs/{id}/taken */
+export const markMedicationAsTaken = async (medicationId) => {
+  try {
+    const response = await fetch(`${API_BASE}/medications/${medicationId}/taken`, {
+      method: 'PUT',
+      headers: defaultHeaders,
+    });
+    
+    return await handleResponse(response);
+  } catch (error) {
+    console.error('Error marking medication as taken:', error);
+    throw error;
+  }
+};
