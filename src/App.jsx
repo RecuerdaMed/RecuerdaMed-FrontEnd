@@ -1,15 +1,18 @@
-
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 
 function App() {
-  
-
   return (
-    <>
-      <h1 >
-        ¡Hola!
-      </h1>
-    </>
-  )
+    <div className="min-h-screen flex flex-col bg-white">
+      <Header />
+
+      <main className="flex-grow">
+       
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
 
-export default App
+export default App;
