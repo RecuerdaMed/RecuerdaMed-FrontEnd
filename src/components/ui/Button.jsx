@@ -1,4 +1,4 @@
-export default function Button({ onClick }) {
+export default function Button({ onClick,children }) {
   return (
     <button
       onClick={onClick}
@@ -9,8 +9,9 @@ export default function Button({ onClick }) {
         text-sm sm:text-base md:text-lg
       "
     >
-      Tomado
+      {children}
     </button>
   );
 }
 
+//he agregado children para que nuestro button sea reutilizable y renderize el texto que necesitemos 
