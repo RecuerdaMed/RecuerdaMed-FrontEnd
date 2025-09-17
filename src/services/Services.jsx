@@ -104,3 +104,64 @@ export const updatedrug = async (drugId, drugData) => {
     throw error;
   }
 };
+/* Para ver que funciona // ============================================
+// MOCK DATA - Para desarrollo sin backend
+// ============================================
+ * Datos mock para desarrollo paralelo
+ * Estructura que esperamos del backend Spring Boot
+ */
+const getMockDrugs = () => {
+  const now = new Date();
+  const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+  
+  return [
+    {
+      id: 1,
+      name: "Ibuprofeno",
+      dose: "500mg",
+      scheduledTime: "08:00",
+      duration: "7 días",
+      status: "PENDING",
+      scheduledDate: today,
+      takenAt: null,
+      createdAt: "2024-09-17T07:00:00Z",
+      updatedAt: "2024-09-17T07:00:00Z"
+    },
+    {
+      id: 2,
+      name: "Omeprazol",
+      dose: "20mg",
+      scheduledTime: "09:00",
+      duration: "3 meses",
+      status: "TAKEN",
+      scheduledDate: today,
+      takenAt: "2024-09-17T09:15:00Z",
+      createdAt: "2024-09-17T07:00:00Z",
+      updatedAt: "2024-09-17T09:15:00Z"
+    },
+    {
+      id: 3,
+      name: "Paracetamol",
+      dose: "1g",
+      scheduledTime: "14:30",
+      duration: "5 días",
+      status: "OVERDUE",
+      scheduledDate: today,
+      takenAt: null,
+      createdAt: "2024-09-17T07:00:00Z",
+      updatedAt: "2024-09-17T14:30:00Z"
+    },
+    {
+      id: 4,
+      name: "Vitamina D",
+      dose: "1000 UI",
+      scheduledTime: "20:00",
+      duration: "6 meses",
+      status: "PENDING",
+      scheduledDate: today,
+      takenAt: null,
+      createdAt: "2024-09-17T07:00:00Z",
+      updatedAt: "2024-09-17T07:00:00Z"
+    }
+  ];
+};
