@@ -60,16 +60,47 @@ export const createDrug = async (drugData) => {
 
 /* Marcar medicación como tomada
 Endpoint esperado: PUT /api/drugs/{id}/taken */
-export const markMedicationAsTaken = async (medicationId) => {
+export const markDrugAsTaken = async (drugId) => {
   try {
-    const response = await fetch(`${API_BASE}/medications/${medicationId}/taken`, {
+    const response = await fetch(`${API_BASE}/drugs/${drugId}/taken`, {
       method: 'PUT',
       headers: defaultHeaders,
     });
     
     return await handleResponse(response);
   } catch (error) {
-    console.error('Error marking medication as taken:', error);
+    console.error('Error marking drug as taken:', error);
+    throw error;
+  }
+};
+/* Eliminar medicación
+Endpoint esperado: DELETE /api/drugs/{id} */
+export const deletedrug = async (drugId) => {
+  try {
+    const response = await fetch(`${API_BASE}/drugs/${drugId}`, {
+      method: 'DELETE',
+      headers: defaultHeaders,
+    });
+    
+    return await handleResponse(response);
+  } catch (error) {
+    console.error('Error deleting drug:', error);
+    throw error;
+  }
+};
+/* Actualizar medicación existente
+Endpoint esperado: PUT /api/drugs/{id} */
+export const updatedrug = async (drugId, drugData) => {
+  try {
+    const response = await fetch(`${API_BASE}/drugs/${drugId}`, {
+      method: 'PUT',
+      headers: defaultHeaders,
+      body: JSON.stringify(drugData),
+    });
+    
+    return await handleResponse(response);
+  } catch (error) {
+    console.error('Error updating drug:', error);
     throw error;
   }
 };
