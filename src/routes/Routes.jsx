@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import AddMedication from "../pages/AddMedication";
-//import Reminders from "../pages/Reminders";
-//import Login from "../pages/Login";
-//import Register from "../pages/Register";
+import Reminders from "../pages/Reminders";
+// import Login from "../pages/Login";
+// import Register from "../pages/Register";
 
 function RoutesApp() {
   return (
