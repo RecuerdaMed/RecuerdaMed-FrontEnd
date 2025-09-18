@@ -22,10 +22,6 @@ export const updateDrug = async (id, payload) => {
   return data;
 };
 
-// export const markAsTaken = async (id) => {
-//   await api.put(`${API_PATH}/${id}/tomado`);
-// };
-// SOLUCIÓN: Usar PATCH en lugar de PUT customizado
 export const markAsTaken = async (id) => {
   try {
     console.log('Marcando como tomado:', id);
@@ -38,7 +34,6 @@ export const markAsTaken = async (id) => {
   }
 };
 
-// Función adicional para desmarcar (opcional)
 export const markAsNotTaken = async (id) => {
   try {
     console.log('Marcando como NO tomado:', id);
