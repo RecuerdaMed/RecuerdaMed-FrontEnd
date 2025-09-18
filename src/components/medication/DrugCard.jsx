@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "../ui/Card";
 
 export default function DrugCard() {
@@ -8,11 +8,19 @@ export default function DrugCard() {
         month: "long",
     });
 
-    const medications = [
+    const [medications, setMedications] = useState([
         { id: 1, title: "Medicación 1", time: "02:00 am", next: "10:00 am", taken: false },
         { id: 2, title: "Medicación 2", time: "11:00 am", next: "19:00 pm", taken: false },
         { id: 3, title: "Medicación 3", time: "08:00 am", next: "20:00 pm", taken: true },
-    ];
+    ]);
+
+    const handleTake = (id) => {
+        setMedications((prev) =>
+            prev.map((med) =>
+                med.id === id ? { ...med, taken: true } : med
+            )
+        );
+    };
 
     return (
         <section className="max-w-5xl mx-auto p-6">
@@ -37,6 +45,7 @@ export default function DrugCard() {
                                 time={med.time}
                                 next={med.next}
                                 taken={med.taken}
+                                onTake={() => handleTake(med.id)}
                             />
                         ))}
                 </section>
@@ -59,6 +68,5 @@ export default function DrugCard() {
                 </section>
             </section>
         </section>
-
     );
 }
