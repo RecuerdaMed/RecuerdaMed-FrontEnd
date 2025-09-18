@@ -1,24 +1,31 @@
-import { beforeEach, expect, test } from 'vitest'
-import { render, screen, } from '@testing-library/react'
-import Footer from '../components/layout/Footer.jsx'
-import '@testing-library/jest-dom'
+import { render, screen } from "@testing-library/react";
+import Footer from "../components/common/Footer.jsx";
 
-//testear footer 
-beforeEach(() => {//Antes de cada test haz esto
-    render(
-         <Footer />  
-    );
-});
+describe("Footer", () => {
+  test("se renderiza el footer con role contentinfo", () => {
+    render(<Footer />);
+    const footer = screen.getByRole("contentinfo");
+    expect(footer).toBeInTheDocument();
+  });
 
-test("renders contact link in footer", () => {
-  render(<Footer />);
-  const link = screen.getByText(/contáctanos/i);
-  expect(link).toBeInTheDocument();
-  expect(link).toHaveAttribute("href", "#");
-});
+  test("muestra el enlace de Contáctanos con href correcto", () => {
+    render(<Footer />);
+    const contactLink = screen.getByRole("link", { name: /contáctanos/i });
+    expect(contactLink).toBeInTheDocument();
+    expect(contactLink).toHaveAttribute("href", "/contact");
+  });
 
-test("renders copyright text", () => {
-  render(<Footer />);
-  const copyright = screen.getByText(/2025 sanitas/i);
-  expect(copyright).toBeInTheDocument();
+  test("muestra el enlace de Política de Privacidad con href correcto", () => {
+    render(<Footer />);
+    const privacyLink = screen.getByRole("link", { name: /política de privacidad/i });
+    expect(privacyLink).toBeInTheDocument();
+    expect(privacyLink).toHaveAttribute("href", "/privacy");
+  });
+
+  test("muestra el texto de derechos reservados", () => {
+    render(<Footer />);
+    const rightsText = screen.getByLabelText(/derechos reservados/i);
+    expect(rightsText).toBeInTheDocument();
+    expect(rightsText).toHaveTextContent(/© 2025/i);
+  });
 });

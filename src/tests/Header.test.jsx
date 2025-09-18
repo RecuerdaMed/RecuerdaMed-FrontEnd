@@ -1,21 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter} from "react-router-dom";
-import '@testing-library/jest-dom';
-import Header from "../components/layout/Header.jsx"; 
+import Header from "../components/common/Header.jsx";
 
-describe('Header Component', () => {
-test("render the logo link to Dashboard", () => {
-  render(
-    <MemoryRouter>
-      <Header />
-    </MemoryRouter>
-  );
-    const logoImg = screen.getByAltText(/sanitas logo/i);
-    
-    expect(logoImg).toBeInTheDocument();
+describe("Header", () => {
+  test("renderiza el logo con el alt correcto", () => {
+    render(<Header />);
+    const logo = screen.getByAltText(/sanitas/i);
+    expect(logo).toBeInTheDocument();
+  });
 
-    const link = logoImg.closest("a");
-
+  test("el logo está dentro de un enlace a la página principal", () => {
+    render(<Header />);
+    const logo = screen.getByAltText(/sanitas/i);
+    const link = logo.closest("a");
     expect(link).toHaveAttribute("href", "/");
-});
+  });
+
 });
