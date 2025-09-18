@@ -1,17 +1,23 @@
-export default function Button({ onClick,children }) {
+import React from "react";
+
+export default function Button({ onClick, children }) {
   return (
     <button
       onClick={onClick}
       className="
-        bg-[#285DDF] hover:bg-blue-700 text-white font-semibold 
-        py-2 px-4 rounded-lg shadow-md transition duration-300
-        w-full sm:w-auto
-        text-sm sm:text-base md:text-lg
-      "
+    bg-[#285DDF] hover:bg-blue-700 text-white font-semibold 
+    py-1 px-4 rounded-full shadow-md transition duration-300
+    transform hover:scale-110
+    text-sm sm:text-base md:text-lg
+    w-auto
+    flex justify-center mx-auto sm:mx-0 cursor-pointer
+  "
     >
       {children}
     </button>
   );
 }
+
+
 
 //he agregado children para que nuestro button sea reutilizable y renderize el texto que necesitemos 
