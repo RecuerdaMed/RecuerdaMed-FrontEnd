@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/Dashboard.jsx";
 import App from "../App.jsx";
+import AddDrug from "../pages/AddDrug.jsx";
 // import Login from "../pages/Login";
 // import Register from "../pages/Register";
 
@@ -13,14 +14,10 @@ const RoutesApp = createBrowserRouter([
         index: true, // Ruta raíz → Dashboard
         element: <Dashboard/>,
       },
-      // {
-      //   path: "login",
-      //   element: <Login />,
-      // },
-      // {
-      //   path: "register",
-      //   element: <Register />,
-      // },
+      {
+        path: "/addmedication",
+        element: <AddDrug/>
+      }
     ],
   },
 ]);
