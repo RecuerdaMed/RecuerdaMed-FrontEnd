@@ -1,51 +1,38 @@
-
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import NavBar from "../components/common/NavBar.jsx";
 
 describe("NavBar", () => {
-  test("renderiza todos los enlaces de navegación", () => {
+  test("renders the Today and Medications links", () => {
     render(
       <MemoryRouter>
         <NavBar />
       </MemoryRouter>
     );
-     
-    expect(screen.getByRole("link", { name: /inicio/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /medicación/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /añadir/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /calendario/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /ajustes/i })).toBeInTheDocument();
+
+    expect(screen.getByRole("menuitem", { name: /hoy/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /medicamentos/i })).toBeInTheDocument();
   });
 
-  test("muestra el contador de medicamentos pendientes si pendingCount > 0", () => {
+  test("marks the active link when the route is '/'", () => {
     render(
-      <MemoryRouter>
-        <NavBar pendingCount={3} />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText("3")).toBeInTheDocument();
-  });
-
-  test("no muestra el contador si pendingCount = 0", () => {
-    render(
-      <MemoryRouter>
-        <NavBar pendingCount={0} />
-      </MemoryRouter>
-    );
-
-    expect(screen.queryByText("0")).not.toBeInTheDocument();
-  });
-
-  test("marca el enlace activo cuando la ruta coincide", () => {
-    render(
-      <MemoryRouter initialEntries={["/medications"]}>
+      <MemoryRouter initialEntries={["/"]}>
         <NavBar />
       </MemoryRouter>
     );
 
-    const link = screen.getByRole("link", { name: /medicación/i });
+    const link = screen.getByRole("menuitem", { name: /hoy/i });
+    expect(link).toHaveClass("bg-[#295ADC] text-white");
+  });
+
+  test("marks the active link when the path is '/medicines'", () => {
+    render(
+      <MemoryRouter initialEntries={["/medicamentos"]}>
+        <NavBar />
+      </MemoryRouter>
+    );
+
+    const link = screen.getByRole("menuitem", { name: /medicamentos/i });
     expect(link).toHaveClass("bg-[#295ADC] text-white");
   });
 });
