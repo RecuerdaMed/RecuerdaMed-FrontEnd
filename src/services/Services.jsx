@@ -5,25 +5,22 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+const API_PATH = "/medicamentos";
+
 export const getAllDrugs = async () => {
-  const { data } = await api.get("/medicamentos");
+  const { data } = await api.get(API_PATH);
   return data;
 };
 
 export const createDrug = async (payload) => {
-  const { data } = await api.post("/medicamentos", payload);
+  const { data } = await api.post(API_PATH, payload);
   return data;
-};
-
-export const updateDrug = async (id, payload) => {
-  const { data } = await api.put(`/medicamentos/${id}`, payload);
-  return data;
-};
-
-export const deleteDrug = async (id) => {
-  await api.delete(`/medicamentos/${id}`);
 };
 
 export const markAsTaken = async (id) => {
-  await api.post(`/medicamentos/${id}/taken`);
+  await api.put(`${API_PATH}/${id}/tomado`);
+};
+
+export const deleteDrug = async (id) => {
+  await api.delete(`${API_PATH}/${id}`);
 };
