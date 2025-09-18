@@ -1,101 +1,101 @@
-import Button from "../components/ui/Button.jsx";
-import { useState } from "react";
+import React, { useState } from "react";
+import Button from "../components/ui/Button";
 
-function AddDrug() {
-  // Para que el botón con el formulario funcione.
+export default function AddDrug({ addMedication }) {
   const [addDrug, setAddDrug] = useState(false);
+  const [name, setName] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [freq, setFreq] = useState("");
 
-  // Para abrir el formulario
-  const openButton = () => {
-    setAddDrug(true);
-  };
+  const openModal = () => setAddDrug(true);
+  const closeModal = () => setAddDrug(false);
 
+  const handleAdd = (e) => {
+    e.preventDefault();
+    if (!name || !startTime || !freq) return;
 
-  const closeButton = () => {
-    setAddDrug(false);
+    addMedication({
+      id: Date.now(),
+      title: name,
+      time: startTime,
+      next: "",
+      taken: false,
+    });
+
+    setName("");
+    setStartTime("");
+    setFreq("");
+    closeModal();
   };
 
   return (
     <>
-      <div className="flex justify-center self-center">
-        <Button className="w-[40px] h-[40px]" onClick={openButton}>
-          <h4>Añadir Medicamento</h4>
-        </Button>
+      <section className="flex justify-center mb-6">
+        <Button onClick={openModal}>Añadir Medicamento</Button>
+      </section>
 
-        {/* En donde se encuentra el formulario*/}
-        {addDrug && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]">
-            {/* Contenido del modal */}
-            <div className="bg-white rounded-lg shadow-2xl max-w-md w-[90%] p-6">
-              {/* Header del modal con botón X */}
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="m-0 text-xl font-semibold">Nuevo Medicamento</h2>
-                
-              </div>
+      {addDrug && (
+        <section className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]">
+          <section className="bg-white rounded-lg shadow-2xl max-w-md w-[90%] p-6">
+            <section className="flex justify-between items-center mb-4">
+              <h2 className="m-0 text-xl font-semibold">Nuevo Medicamento</h2>
+              <button
+                onClick={closeModal}
+                className="text-gray-700 font-bold px-2 py-1 rounded hover:bg-gray-200"
+              >
+                X
+              </button>
+            </section>
 
-              {/* Aquí irá tu formulario después */}
-              <div className="p-[1rem]">
-                <form>
-                    <section>
-                  <label htmlFor="medication-name">
-                    
-                    <h4>Nombre del Medicamento: </h4>
-                    <input
-                      type="text"
-                      className="border-[#D9D9D9] border-[1px] rounded-[5px] h-[30px]"
-                    />
-                  </label>
+            <form className="space-y-4" onSubmit={handleAdd}>
+              <section>
+                <label className="block mb-1 font-medium">Nombre del Medicamento:</label>
+                <input
+                  type="text"
+                  className="border border-gray-300 rounded px-2 py-1 w-full"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </section>
+
+              <section className="grid grid-cols-2 gap-4">
+                <section>
+                  <label className="block mb-1 font-medium">Hora de inicio:</label>
+                  <input
+                    type="time"
+                    className="border border-gray-300 rounded px-2 py-1 w-full"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                  />
                 </section>
-                <br />
-                  <section className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                    <div className="flex flex-col">
-                      <label htmlFor="start-time" className="mb-2 font-medium">
-                        Hora de inicio:
-                      </label>
-                      <input
-                        id="start-time"
-                        type="time"
-                        className="h-[30px] w-[120px] border border-[#D9D9D9] rounded-[5px] flex justify-center"
-                      />
-                    </div>
 
-                    <div className="flex flex-col">
-                      <label htmlFor="freq" className="mb-2 font-medium">
-                        Frecuencia (en horas):
-                      </label>
-                      <input
-                        id="freq"
-                        type="number"
-                        min="1"
-                        max="24"
-                        className="h-[30px] w-[120px] border border-[#D9D9D9] rounded-[5px]"
-                      />
-                    </div>
-                  </section>
-                </form>
-              </div>
+                <section>
+                  <label className="block mb-1 font-medium">Frecuencia (hrs):</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="24"
+                    className="border border-gray-300 rounded px-2 py-1 w-full"
+                    value={freq}
+                    onChange={(e) => setFreq(e.target.value)}
+                  />
+                </section>
+              </section>
 
-              {/* Botones del modal */}
-              <div className="flex justify-end gap-[0.75rem] mt-[1.5rem]">
-                <Button
-                  onClick={closeButton}
-                  className="bg-[#f3f4f6] text-[#374151] p-[1rem] border-none rounded-[0.375rem]cursor-pointer"
+              <section className="flex justify-end gap-2 mt-6">
+                <Button type="submit">Agregar</Button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="bg-gray-200 text-gray-700 px-4 py-1 rounded"
                 >
-                  Agregar
-                </Button>
-                <Button
-                  onClick={closeButton}
-                  className="bg-[#f3f4f6] text-[#374151] p-[1rem] border-none rounded-[0.375rem]cursor-pointer"
-                >
-                  Cancelar 
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+                  Cancelar
+                </button>
+              </section>
+            </form>
+          </section>
+        </section>
+      )}
     </>
   );
 }
-
-export default AddDrug;

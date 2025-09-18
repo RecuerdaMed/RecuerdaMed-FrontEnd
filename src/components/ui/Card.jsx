@@ -6,20 +6,26 @@ export default function Card({ title, time, next, taken, onTake }) {
     return (
         <article className="bg-white shadow-lg hover:shadow-xl transition-shadow rounded-2xl p-5 flex flex-col mb-5">
             <section className="flex justify-between items-center mb-4">
-                <div>
-                    <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-                    <p className="text-blue-600 font-medium">{time}</p>
-                    <p className="text-gray-500 text-sm">Siguiente: {next}</p>
+                <div className="flex items-center gap-2">
+                    <div>
+                        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+                        <p className="text-blue-600 font-medium">{time}</p>
+                        <p className="text-gray-500 text-sm">Siguiente: {next}</p>
+                    </div>
+                    {taken && (
+                        <span className="text-green-500 text-2xl ml-auto">
+                            ✅
+                        </span>
+                    )}
                 </div>
 
                 {!taken && (
                     <Button
                         onClick={onTake}
-                        className={`w-auto py-1 px-4 rounded-full ${taken ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                        className="w-auto py-1 px-4 rounded-full bg-blue-600 hover:bg-blue-700 transform transition-all duration-300 hover:scale-110"
                     >
                         Tomada
                     </Button>
-
                 )}
             </section>
 
