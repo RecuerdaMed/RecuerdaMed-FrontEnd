@@ -126,9 +126,9 @@ express / json-server → API REST para el backend.
 
 ## Colaboradoras
 
-- Ana Aguilera - https://github.com/AnaAguileraMorales88 
+- Ana Aguilera 
 
-- Andrea Olivera - https://github.com/andreaonweb
+- Andrea Olivera 
 
 - Priscelis Codrington
 
