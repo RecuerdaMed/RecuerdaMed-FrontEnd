@@ -10,8 +10,8 @@ function RoutesApp() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/add-medication" element={<AddMedication />} />
-      {/* <Route path="/reminders" element={<Reminders />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/reminders" element={<Reminders />} />
+      {/* <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} /> */}
     </Routes>
   );
