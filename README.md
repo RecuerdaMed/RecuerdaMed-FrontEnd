@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Recordatorio de Medicación es una aplicación web desarrollada en el marco del Hackathon F5 de septiembre de 2025. Su objetivo es ayudar a las personas usuarias a gestionar sus medicamentos, programar recordatorios y llevar un control de la toma diaria de forma clara y accesible.
+RecuerdaMed es una aplicación web desarrollada en el marco del Hackathon F5 de septiembre de 2025. Su objetivo es ayudar a las personas usuarias a gestionar sus medicamentos, programar recordatorios y llevar un control de la toma diaria de forma clara y accesible.
 
 El proyecto busca mejorar la experiencia en salud digital, fomentando la responsabilidad en el consumo de medicamentos y ofreciendo una interfaz sencilla e inclusiva.
 
@@ -129,4 +129,14 @@ express / json-server → API REST para el backend.
 - Ana Aguilera - https://github.com/AnaAguileraMorales88 
 
 - Andrea Olivera - https://github.com/andreaonweb
+
+- Priscelis Codrington
+
+- Ana Muruzabal
+
+- Ingrid Martínez
+
+- Mayleth Carrascal
+
+- Judit Corbalán
 
