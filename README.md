@@ -1,142 +1,165 @@
-# RecuerdaMed
+# 📌 RecuerdaMed
 
-## Descripción
+## 📝 Descripción
 
-RecuerdaMed es una aplicación web desarrollada en el marco del Hackathon F5 de septiembre de 2025. Su objetivo es ayudar a las personas usuarias a gestionar sus medicamentos, programar recordatorios y llevar un control de la toma diaria de forma clara y accesible.
+**RecuerdaMed** es una aplicación web desarrollada en el marco del **Hackathon F5 (septiembre 2025)**.  
 
-El proyecto busca mejorar la experiencia en salud digital, fomentando la responsabilidad en el consumo de medicamentos y ofreciendo una interfaz sencilla e inclusiva.
+Su objetivo es ayudar a las personas usuarias a **gestionar sus medicamentos, programar recordatorios y llevar un control de la toma diaria** de forma clara y accesible.
 
-## Capturas del Proyecto
+El proyecto busca mejorar la experiencia en salud digital, fomentando la **responsabilidad en el consumo de medicamentos** y ofreciendo una interfaz **sencilla e inclusiva**.
 
-(Aquí irían capturas de pantalla de la app funcionando: formulario de registro, listado de medicamentos, recordatorio visual, etc.)
+---
 
-## Objetivos del Proyecto
+## 📸 Capturas del Proyecto
 
-- Registrar medicamentos con persistencia en base de datos.
+*(Aquí irán capturas de pantalla de la app funcionando: formulario de registro, listado de medicamentos, recordatorio visual, etc.)*
 
-- Listar medicamentos activos y marcarlos como “tomados”.
+---
 
-- Visualizar el estado según la hora del día.
+## 🎯 Objetivos del Proyecto
 
-- Integrar frontend y backend mediante API REST.
+- Registrar medicamentos con persistencia en base de datos
+- Listar medicamentos activos y marcarlos como "tomados"
+- Visualizar el estado según la hora del día
+- Integrar **frontend y backend** mediante API REST
 
-Opcionales:
+---
 
-- Registro de alergias y validación cruzada con medicamentos.
+## 🛠️ Tecnologías
 
-- Notificaciones visuales en la hora de toma.
+- **Frontend**: React.js, Tailwind CSS, Vite
+- **Gestión de datos**: Axios para consumo de API
+- **Testing**: Vitest
 
-- Filtros y cálculo de dosis restantes.
+---
 
-- Modo oscuro y mejoras de accesibilidad.
-
-## Tecnologías
-
-Frontend: React.js, Tailwind CSS, Vite
-Backend: Node.js / Express.js, Base de datos (ej. SQLite o MongoDB según implementación)
-
-## Gestión de datos: 
-
-- Axios para consumo de API
-- Testing: Vitest
-
-## Herramientas
+## 📚 Herramientas
 
 - Figma (diseño UI/UX)
-
 - Visual Studio Code (desarrollo)
-
-- Trello / Jira (gestión ágil)
-
+- Trello / GitHub Projects (gestión de tareas)
 - Git / GitHub (control de versiones)
 
-## Endpoints de la API
+---
 
-- POST /medicamentos → Registrar medicamento.
+## 🔗 Endpoints de la API
 
-- GET /medicamentos → Obtener todos los medicamentos.
+- **POST** `/medicamentos` → Registrar medicamento
+- **GET** `/medicamentos` → Obtener todos los medicamentos
+- **PUT** `/medicamentos/:id/tomado` → Marcar medicamento como tomado
+- **DELETE** `/medicamentos/:id` → Eliminar medicamento
 
-- PUT /medicamentos/:id/tomado → Marcar medicamento como tomado.
+---
 
-- DELETE /medicamentos/:id → Eliminar medicamento.
+## 📁 Estructura del Proyecto
 
-(Opcionales: endpoints para alergias y validaciones adicionales).
+```
+RECUERDAMED-FR.../
+├── 📁 node_modules/
+├── 📁 public/
+├── 📁 src/
+│   ├── 📁 assets/
+│   │   └── 📁 images/
+│   │       ├── sanitas-logo.png
+│   │       └── sanitas-logo2.png
+│   ├── 📁 components/
+│   │   ├── 📁 common/
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Header.jsx
+│   │   │   └── NavBar.jsx
+│   │   └── 📁 medication/
+│   │       ├── DrugCalendar.jsx
+│   │       ├── DrugCard.jsx
+│   │       ├── DrugForm.jsx
+│   │       └── DrugList.jsx
+│   ├── 📁 ui/
+│   │   ├── Button.jsx
+│   │   ├── Card.jsx
+│   │   └── Input.jsx
+│   ├── 📁 pages/
+│   │   ├── CalendarPage.jsx
+│   │   ├── Dashboard.jsx
+│   │   └── Medications.jsx
+│   ├── 📁 routes/
+│   │   └── Routes.jsx
+│   ├── 📁 services/
+│   │   └── Services.jsx
+│   ├── App.jsx
+│   ├── index.css
+│   ├── Layout.jsx
+│   └── main.jsx
+├── .gitignore
+├── .js.json
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── README.md
+└── vite.config.js
+```
 
-## Metodología y Fases
+---
 
-- Trabajo en equipo usando Scrum y Kanban.
+## ⚙️ Instalación
 
-- Desarrollo en sprints con revisiones y entregas parciales.
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/RecuerdaMed/RecuerdaMed-FrontEnd.git
+   ```
 
-- Iteración basada en feedback continuo para mejorar la experiencia de usuario.
+2. **Acceder al proyecto:**
+   ```bash
+   cd recuerdamed-frontend
+   ```
 
-- Pruebas Unitarias (Vitest)
+3. **Instalar las dependencias:**
+   ```bash
+   npm install
+   npm install react-router-dom
+   npm install axios
+   ```
 
-- Este proyecto utiliza Vitest para validar las funcionalidades principales.
+4. **Ejecutar el frontend:**
+   ```bash
+   npm run dev
+   ```
 
-## Cómo ejecutar las pruebas
-npm run test
+¡Listo! Ya puedes empezar a usar la aplicación.
 
-## Uso
+---
 
-- Abrir la aplicación en el navegador.
+## 🚀 Uso
 
-- Registrar medicamentos con su dosis y horario.
+1. Abrir la aplicación en el navegador
+2. Registrar medicamentos con su dosis y horario
+3. Consultar el listado de medicamentos activos
+4. Marcar cada dosis como "tomada" en su momento
+5. Visualizar el historial de tomas y dosis restantes
 
-- Consultar el listado de medicamentos activos.
+---
 
-- Marcar cada dosis como “tomada” en su momento.
+## 📦 Dependencias Principales
 
-- Visualizar el historial de tomas y dosis restantes.
+- **react-router-dom** → Navegación en la aplicación
+- **axios** → Cliente HTTP para consumir la API
+- **vitest / @testing-library/jest-dom** → Ejecución de los tests del frontend
 
-(Opcional) Gestionar alergias y recibir validaciones cruzadas.
+---
 
-## Instalación
+## 👩‍💻 Colaboradoras
 
-https://github.com/RecuerdaMed
-
-
-## Accede al proyecto e instala dependencias:
-
-- cd recordatorio-medicacion
-- npm install
-- npm install react-router-dom
-- npm install axios
-
-
-## Ejecuta el backend (ejemplo con json-server):
-
-npx json-server --watch db.json --port 3001
-
-
-## Ejecuta el frontend:
-
-npm run dev
-
-
-¡Listo! 🎉 Ya puedes empezar a usar la aplicación.
-
-## Dependencias principales
-
-react-router-dom → Navegación en la aplicación.
-
-axios → Cliente HTTP para consumir la API.
-
-express / json-server → API REST para el backend.
-
-## Colaboradoras
-
-- Ana Aguilera 
-
-- Andrea Olivera 
-
+- Ana Aguilera
+- Andrea Olivera
 - Priscelis Codrington
-
 - Ana Muruzabal
-
 - Ingrid Martínez
-
 - Mayleth Carrascal
 
-- Judit Corbalán
+---
+
+## 📄 Licencia
+
+Este proyecto fue desarrollado para el Hackathon F5 2025.
+
+
 
