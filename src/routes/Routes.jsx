@@ -13,10 +13,6 @@ const RoutesApp = createBrowserRouter([
       {
         index: true, // Ruta raíz → Dashboard
         element: <Dashboard/>,
-      },
-      {
-        path: "/addmedication",
-        element: <AddDrug/>
       }
     ],
   },
