@@ -11,7 +11,7 @@ export default function AddDrug() {
     setSubmitting(true);
     try {
       await createDrug(payload);
-      navigate("/medicamentos");
+      navigate("/medicaciones");
     } finally {
       setSubmitting(false);
     }
@@ -19,9 +19,7 @@ export default function AddDrug() {
 
   return (
     <section aria-labelledby="add-title" className="max-w-2xl mx-auto p-4 bg-white rounded-lg shadow-sm">
-      <h1 id="add-title" className="text-2xl font-semibold text-gray-900 mb-4">
-        Añadir medicación
-      </h1>
+      <h1 id="add-title" className="text-2xl font-semibold text-gray-900 mb-4">Añadir medicación</h1>
       <DrugForm onSubmit={handleSubmit} submitLabel={submitting ? "Guardando…" : "Guardar"} />
     </section>
   );
