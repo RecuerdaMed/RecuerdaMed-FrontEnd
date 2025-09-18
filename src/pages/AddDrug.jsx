@@ -6,25 +6,36 @@ export default function AddDrug({ addMedication }) {
   const [name, setName] = useState("");
   const [startTime, setStartTime] = useState("");
   const [freq, setFreq] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const openModal = () => setAddDrug(true);
   const closeModal = () => setAddDrug(false);
 
   const handleAdd = (e) => {
     e.preventDefault();
-    if (!name || !startTime || !freq) return;
+    if (!name || !startTime || !freq || !startDate || !endDate) return;
+
+    const startDateTime = new Date(`${startDate}T${startTime}`);
+    const nextDateTime = new Date(startDateTime.getTime() + Number(freq) * 60 * 60 * 1000);
 
     addMedication({
       id: Date.now(),
       title: name,
       time: startTime,
-      next: "",
+      startDate,
+      endDate,
+      frequency: freq,
+      next: nextDateTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      nextDate: nextDateTime.toLocaleDateString("es-ES"),
       taken: false,
     });
 
     setName("");
     setStartTime("");
     setFreq("");
+    setStartDate("");
+    setEndDate("");
     closeModal();
   };
 
@@ -58,9 +69,29 @@ export default function AddDrug({ addMedication }) {
                 />
               </section>
 
-              <section className="grid grid-cols-2 gap-4">
+              <section className="grid grid-cols-4 gap-4">
                 <section>
-                  <label className="block mb-1 font-medium">Hora de inicio:</label>
+                  <label className="block mb-1 font-medium">Fecha inicio:</label>
+                  <input
+                    type="date"
+                    className="border border-gray-300 rounded px-2 py-1 w-full"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </section>
+
+                <section>
+                  <label className="block mb-1 font-medium">Fecha fin:</label>
+                  <input
+                    type="date"
+                    className="border border-gray-300 rounded px-2 py-1 w-full"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </section>
+
+                <section>
+                  <label className="block mb-1 font-medium">Hora inicio:</label>
                   <input
                     type="time"
                     className="border border-gray-300 rounded px-2 py-1 w-full"
