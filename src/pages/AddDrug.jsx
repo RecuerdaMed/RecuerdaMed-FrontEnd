@@ -1,42 +1,64 @@
 import React, { useState } from "react";
+import { createDrug } from "../services/Services";
 import Button from "../components/ui/Button";
 
-export default function AddDrug({ addMedication }) {
+export default function AddDrug({ onMedicationAdded }) {
   const [addDrug, setAddDrug] = useState(false);
-  const [name, setName] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [freq, setFreq] = useState("");
+  const [drugName, setDrugName] = useState("");
+  const [description, setDescription] = useState("");
+  const [dosage, setDosage] = useState("");
+  const [frequencyHours, setFrequencyHours] = useState("");
+  const [nextIntakeTime, setNextIntakeTime] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const openModal = () => setAddDrug(true);
   const closeModal = () => setAddDrug(false);
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    if (!name || !startTime || !freq || !startDate || !endDate) return;
+    if (!drugName || !dosage || !frequencyHours || !nextIntakeTime || !startDate) return;
 
-    const startDateTime = new Date(`${startDate}T${startTime}`);
-    const nextDateTime = new Date(startDateTime.getTime() + Number(freq) * 60 * 60 * 1000);
+    setLoading(true);
 
-    addMedication({
-      id: Date.now(),
-      title: name,
-      time: startTime,
-      startDate,
-      endDate,
-      frequency: freq,
-      next: nextDateTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      nextDate: nextDateTime.toLocaleDateString("es-ES"),
-      taken: false,
-    });
+    try {
+      // Estructura exacta para el backend Java
+      const drugRequest = {
+        drugName: drugName,
+        description: description || "",
+        dosage: dosage,
+        frequencyHours: parseInt(frequencyHours),
+        nextIntakeTime: nextIntakeTime, // HH:mm:ss format
+        startDate: new Date(startDate).toISOString(),
+        endDate: endDate ? new Date(endDate).toISOString() : null,
+        active: true,
+        activeReminder: true
+      };
 
-    setName("");
-    setStartTime("");
-    setFreq("");
-    setStartDate("");
-    setEndDate("");
-    closeModal();
+      const newDrug = await createDrug(drugRequest);
+      console.log("Medicamento creado:", newDrug);
+
+      if (onMedicationAdded) {
+        onMedicationAdded(newDrug);
+      }
+
+      // Limpiar formulario
+      setDrugName("");
+      setDescription("");
+      setDosage("");
+      setFrequencyHours("");
+      setNextIntakeTime("");
+      setStartDate("");
+      setEndDate("");
+      closeModal();
+
+    } catch (error) {
+      console.error("Error creando medicamento:", error);
+      alert("Error al crear el medicamento. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,7 +74,8 @@ export default function AddDrug({ addMedication }) {
               <h2 className="m-0 text-xl font-semibold">Nuevo Medicamento</h2>
               <button
                 onClick={closeModal}
-                className="text-gray-700 font-bold px-2 py-1 rounded hover:bg-gray-200"
+                disabled={loading}
+                className="text-gray-700 font-bold px-2 py-1 rounded hover:bg-gray-200 disabled:opacity-50"
               >
                 X
               </button>
@@ -64,39 +87,47 @@ export default function AddDrug({ addMedication }) {
                 <input
                   type="text"
                   className="border border-gray-300 rounded px-2 py-1 w-full"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={drugName}
+                  onChange={(e) => setDrugName(e.target.value)}
+                  disabled={loading}
+                  required
                 />
               </section>
 
-              <section className="grid grid-cols-4 gap-4">
-                <section>
-                  <label className="block mb-1 font-medium">Fecha inicio:</label>
-                  <input
-                    type="date"
-                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </section>
+              <section>
+                <label className="block mb-1 font-medium">Descripción (opcional):</label>
+                <textarea
+                  className="border border-gray-300 rounded px-2 py-1 w-full"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={loading}
+                  rows="2"
+                />
+              </section>
 
-                <section>
-                  <label className="block mb-1 font-medium">Fecha fin:</label>
-                  <input
-                    type="date"
-                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </section>
+              <section>
+                <label className="block mb-1 font-medium">Dosis:</label>
+                <input
+                  type="text"
+                  placeholder="ej: 500mg"
+                  className="border border-gray-300 rounded px-2 py-1 w-full"
+                  value={dosage}
+                  onChange={(e) => setDosage(e.target.value)}
+                  disabled={loading}
+                  required
+                />
+              </section>
 
+              <section className="grid grid-cols-2 gap-4">
                 <section>
-                  <label className="block mb-1 font-medium">Hora inicio:</label>
+                  <label className="block mb-1 font-medium">Hora de toma:</label>
                   <input
                     type="time"
                     className="border border-gray-300 rounded px-2 py-1 w-full"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
+                    value={nextIntakeTime}
+                    onChange={(e) => setNextIntakeTime(e.target.value)}
+                    disabled={loading}
+                    required
                   />
                 </section>
 
@@ -107,18 +138,48 @@ export default function AddDrug({ addMedication }) {
                     min="1"
                     max="24"
                     className="border border-gray-300 rounded px-2 py-1 w-full"
-                    value={freq}
-                    onChange={(e) => setFreq(e.target.value)}
+                    value={frequencyHours}
+                    onChange={(e) => setFrequencyHours(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                </section>
+              </section>
+
+              <section className="grid grid-cols-2 gap-4">
+                <section>
+                  <label className="block mb-1 font-medium">Fecha inicio:</label>
+                  <input
+                    type="date"
+                    className="border border-gray-300 rounded px-2 py-1 w-full"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                </section>
+
+                <section>
+                  <label className="block mb-1 font-medium">Fecha fin (opcional):</label>
+                  <input
+                    type="date"
+                    className="border border-gray-300 rounded px-2 py-1 w-full"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    disabled={loading}
                   />
                 </section>
               </section>
 
               <section className="flex justify-end gap-2 mt-6">
-                <Button type="submit">Agregar</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Guardando..." : "Agregar"}
+                </Button>
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="bg-gray-200 text-gray-700 px-4 py-1 rounded"
+                  disabled={loading}
+                  className="bg-gray-200 text-gray-700 px-4 py-1 rounded disabled:opacity-50"
                 >
                   Cancelar
                 </button>

@@ -1,129 +1,60 @@
-// Configuración base para backend Spring Boot
-const API_BASE = "http://localhost:8080";
+import axios from "axios";
 
-// Headers estándar para todas las requests
-const defaultHeaders = {
-  "Content-Type": "application/json",
-  Accept: "application/json",
-};
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
+  headers: { "Content-Type": "application/json" },
+});
 
-const handleResponse = async (response) => {
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `HTTP ${response.status}: ${errorText || response.statusText}`
-    );
-  }
+const toTime = (hhmm) => (hhmm && hhmm.length === 5 ? `${hhmm}:00` : hhmm || "");
+const toDate = (yyyy_mm_dd) => (yyyy_mm_dd ? yyyy_mm_dd : null);
 
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return await response.json();
-  }
+export const formatDrugPayload = (d) => ({
+  drugName: d.drugName,
+  description: d.description ?? "",
+  dosage: d.dosage,
+  frequencyHours: typeof d.frequencyHours === "string" ? parseInt(d.frequencyHours, 10) : d.frequencyHours,
+  nextIntakeTime: toTime(d.nextIntakeTime),
+  startDate: toDate(d.startDate),
+  endDate: toDate(d.endDate),
+  active: d.active ?? true,
+  activeReminder: d.activeReminder ?? true,
+});
 
-  return await response.text();
-};
-
-/* GET de todas las medicaciones - endpoint /medicamentos */
 export const getAllDrugs = async () => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos`, {
-      method: "GET",
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error fetching drugs:', error);
-    return getMockDrugs();
-  }
+  const { data } = await api.get("/drugs");
+  return data;
 };
 
-/* GET medicamento por ID */
-export const getDrugById = async (drugId) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}`, {
-      method: "GET",
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error fetching drug by id:', error);
-    throw error;
-  }
+export const getDrugById = async (id) => {
+  const { data } = await api.get(`/drugs/${id}`);
+  return data;
 };
 
-/* Crear nueva medicación */
-export const createDrug = async (drugRequest) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos`, {
-      method: "POST",
-      headers: defaultHeaders,
-      body: JSON.stringify(drugRequest),
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error creating drug:', error);
-    throw error;
-  }
+export const searchDrugsByName = async (drugName) => {
+  const { data } = await api.get(`/drugs/search`, { params: { drugName } });
+  return data;
 };
 
-/* Actualizar medicación */
-export const updateDrug = async (drugId, drugRequest) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}`, {
-      method: 'PUT',
-      headers: defaultHeaders,
-      body: JSON.stringify(drugRequest),
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error updating drug:', error);
-    throw error;
-  }
+export const createDrug = async (drug) => {
+  const payload = formatDrugPayload(drug);
+  const { data } = await api.post("/drugs", payload);
+  return data;
 };
 
-/* Eliminar medicación */
-export const deleteDrug = async (drugId) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}`, {
-      method: 'DELETE',
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error deleting drug:', error);
-    throw error;
-  }
+export const updateDrug = async (id, drug) => {
+  const payload = formatDrugPayload(drug);
+  const { data } = await api.put(`/drugs/${id}`, payload);
+  return data;
 };
 
-/* Marcar como tomada */
-export const markAsTaken = async (drugId) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}/taken`, {
-      method: 'PUT',
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error marking drug as taken:', error);
-    throw error;
-  }
+export const deleteDrug = async (id) => {
+  await api.delete(`/drugs/${id}`);
 };
 
-// Mock data para desarrollo
-const getMockDrugs = () => {
-  return [
-    {
-      id: 1,
-      name: "Ibuprofeno",
-      dose: "500mg",
-      scheduledTime: "08:00",
-      status: "PENDING"
-    }
-  ];
+export const markAsTaken = async (id) => {
+  await api.post(`/drugs/${id}/taken`);
+};
+
+export const processReminders = async () => {
+  await api.post(`/drugs/process-reminders`);
 };
