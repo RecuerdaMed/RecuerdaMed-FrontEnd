@@ -53,7 +53,7 @@ export default function Dashboard() {
 
       <section aria-labelledby="quick-actions" className="flex flex-wrap gap-3">
         <Link to="/add-drug"><Button>Añadir medicación</Button></Link>
-        <Link to="/medicaciones"><Button className="bg-white text-[#295ADC] border border-[#295ADC]">Ver todas</Button></Link>
+        <Link to="/medicamentos"><Button className="bg-white text-[#295ADC] border border-[#295ADC]">Ver todas</Button></Link>
         <Link to="/calendar"><Button className="bg-white text-[#295ADC] border border-[#295ADC]">Calendario</Button></Link>
       </section>
 
@@ -63,7 +63,7 @@ export default function Dashboard() {
           <span className="inline-flex items-center justify-center min-w-8 h-8 px-2 rounded-full bg-red-600 text-white text-sm">{pendingCount}</span>
         </div>
         {loading && <p role="status" className="text-gray-700">Cargando…</p>}
-        {!loading && pendingCount === 0 && <p className="text-gray-700">No hay medicaciones pendientes hoy.</p>}
+        {!loading && pendingCount === 0 && <p className="text-gray-700">No hay medicamentos pendientes hoy.</p>}
         <ul className="divide-y" role="list">
           {todays.map(d => (
             <li key={d.id} className="py-3 flex items-center justify-between gap-3">

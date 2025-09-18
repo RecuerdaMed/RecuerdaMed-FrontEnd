@@ -11,7 +11,7 @@ export default function AddDrug() {
     setSubmitting(true);
     try {
       await createDrug(payload);
-      navigate("/medicaciones");
+      navigate("/medicamentos");
     } finally {
       setSubmitting(false);
     }

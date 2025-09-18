@@ -6,24 +6,24 @@ const api = axios.create({
 });
 
 export const getAllDrugs = async () => {
-  const { data } = await api.get("/medicaciones");
+  const { data } = await api.get("/medicamentos");
   return data;
 };
 
 export const createDrug = async (payload) => {
-  const { data } = await api.post("/medicaciones", payload);
+  const { data } = await api.post("/medicamentos", payload);
   return data;
 };
 
 export const updateDrug = async (id, payload) => {
-  const { data } = await api.put(`/medicaciones/${id}`, payload);
+  const { data } = await api.put(`/medicamentos/${id}`, payload);
   return data;
 };
 
 export const deleteDrug = async (id) => {
-  await api.delete(`/medicaciones/${id}`);
+  await api.delete(`/medicamentos/${id}`);
 };
 
 export const markAsTaken = async (id) => {
-  await api.post(`/medicaciones/${id}/taken`);
+  await api.post(`/medicamentos/${id}/taken`);
 };

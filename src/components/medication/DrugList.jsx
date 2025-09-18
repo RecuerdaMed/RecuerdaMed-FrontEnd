@@ -23,7 +23,7 @@ export default function DrugList({ onSelect }) {
 
   return (
     <section aria-labelledby="med-list-title">
-      <h2 id="med-list-title" className="text-xl font-semibold text-gray-900 mb-3">Medicaciones</h2>
+      <h2 id="med-list-title" className="text-xl font-semibold text-gray-900 mb-3">medicamentos</h2>
       <ul className="space-y-2" role="list" aria-label="Lista de medicación">
         {drugs.map(d => (
           <li key={d.id} className="flex items-center justify-between rounded border p-3">

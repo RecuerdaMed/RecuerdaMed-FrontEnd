@@ -18,7 +18,7 @@ export default function NavBar({ pendingCount = 0 }) {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/medicaciones" className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
+          <NavLink to="/medicacione" className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
             Medicación
             {pendingCount > 0 && (
               <span className="ml-2 inline-flex min-w-6 h-6 px-2 items-center justify-center rounded-full bg-red-600 text-white text-xs">
