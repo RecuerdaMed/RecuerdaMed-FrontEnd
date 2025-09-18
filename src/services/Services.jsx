@@ -5,25 +5,47 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+const API_PATH = "/medicamentos";
+
 export const getAllDrugs = async () => {
-  const { data } = await api.get("/medicaciones");
+  const { data } = await api.get(API_PATH);
   return data;
 };
 
 export const createDrug = async (payload) => {
-  const { data } = await api.post("/medicaciones", payload);
+  const { data } = await api.post(API_PATH, payload);
   return data;
 };
 
 export const updateDrug = async (id, payload) => {
-  const { data } = await api.put(`/medicaciones/${id}`, payload);
+  const { data } = await api.put(`${API_PATH}/${id}`, payload);
   return data;
 };
 
-export const deleteDrug = async (id) => {
-  await api.delete(`/medicaciones/${id}`);
+export const markAsTaken = async (id) => {
+  try {
+    console.log('Marcando como tomado:', id);
+    const { data } = await api.patch(`${API_PATH}/${id}`, { taken: true });
+    console.log('Éxito al marcar como tomado');
+    return data;
+  } catch (error) {
+    console.error('Error marking as taken:', error);
+    throw error;
+  }
 };
 
-export const markAsTaken = async (id) => {
-  await api.post(`/medicaciones/${id}/taken`);
+export const markAsNotTaken = async (id) => {
+  try {
+    console.log('Marcando como NO tomado:', id);
+    const { data } = await api.patch(`${API_PATH}/${id}`, { taken: false });
+    console.log('Éxito al marcar como NO tomado');
+    return data;
+  } catch (error) {
+    console.error('Error marking as not taken:', error);
+    throw error;
+  }
+};
+
+export const deleteDrug = async (id) => {
+  await api.delete(`${API_PATH}/${id}`);
 };

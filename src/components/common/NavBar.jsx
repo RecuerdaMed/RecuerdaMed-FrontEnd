@@ -1,48 +1,35 @@
 import { NavLink } from "react-router-dom";
 
-export default function NavBar({ pendingCount = 0 }) {
-  const base = "px-4 py-3 rounded-lg text-base font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#295ADC]";
-  const active = "bg-[#295ADC] text-white";
-  const inactive = "text-gray-900 hover:bg-blue-50";
+const linkBase =
+  "px-4 py-2 rounded-full text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#295ADC]";
+const linkInactive = "text-gray-700 hover:bg-blue-50";
+const linkActive = "bg-[#295ADC] text-white";
 
+const linkClass = ({ isActive }) =>
+  [linkBase, isActive ? linkActive : linkInactive].join(" ");
+
+export default function NavBar() {
   return (
     <nav
-      className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-200"
-      role="navigation"
+      className="w-full border-b border-gray-200 bg-white/80 backdrop-blur sticky top-0 z-40"
       aria-label="Navegación principal"
     >
-      <ul className="flex justify-center gap-3 md:gap-6 py-2 md:py-3">
-        <li>
-          <NavLink to="/" end className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
-            Inicio
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/medications" className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
-            Medicación
-            {pendingCount > 0 && (
-              <span className="ml-2 inline-flex min-w-6 h-6 px-2 items-center justify-center rounded-full bg-red-600 text-white text-xs">
-                {pendingCount}
-              </span>
-            )}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/add-drug" className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
-            Añadir
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/calendar" className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
-            Calendario
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/settings" className={({ isActive }) => `${base} ${isActive ? active : inactive}`}>
-            Ajustes
-          </NavLink>
-        </li>
-      </ul>
+      <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+       
+
+        <ul className="flex items-center gap-2" role="menubar">
+          <li role="none">
+            <NavLink to="/" className={linkClass} role="menuitem">
+              Hoy
+            </NavLink>
+          </li>
+          <li role="none">
+            <NavLink to="/medicamentos" className={linkClass} role="menuitem">
+              Medicamentos
+            </NavLink>
+          </li>
+        </ul>
+      </div>
     </nav>
   );
 }
