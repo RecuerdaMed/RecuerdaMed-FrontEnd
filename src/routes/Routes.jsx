@@ -3,7 +3,7 @@ import Layout from "../Layout";
 import Dashboard from "../pages/Dashboard";
 import AddDrug from "../pages/AddDrug";
 import Medications from "../pages/Medications";
-import Calendar from "../components/ui/Calendar";
+import CalendarPage from "../pages/CalendarPage";
 
 const router = createBrowserRouter([
   {
@@ -13,7 +13,7 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "medicaciones", element: <Medications /> },
       { path: "add-drug", element: <AddDrug /> },
-      { path: "calendar", element: <Calendar /> },
+      { path: "calendar", element: <CalendarPage /> },
       { path: "settings", element: <div className="p-4">Ajustes</div> },
     ],
   },

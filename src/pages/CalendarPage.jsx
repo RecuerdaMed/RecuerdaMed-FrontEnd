@@ -19,12 +19,12 @@ export default function CalendarPage() {
 
   useEffect(() => { load(); }, []);
 
+  if (loading) return <p role="status" className="text-gray-800 p-4">Cargando…</p>;
+
   return (
     <section className="max-w-5xl mx-auto p-4">
       <h1 className="text-2xl font-semibold text-gray-900 mb-4">Calendario</h1>
-      {loading ? <p role="status" className="text-gray-700">Cargando…</p> : (
-        <Calendar medications={meds} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
-      )}
+      <Calendar medications={meds} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
     </section>
   );
 }
