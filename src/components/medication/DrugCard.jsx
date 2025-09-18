@@ -1,80 +1,61 @@
-import React, { useState, useEffect } from "react";
-import Card from "../ui/Card";
-import AddDrug from "../../pages/AddDrug";
-import Calendar from "../ui/Calendar";
+import { useState, useMemo } from "react";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
-export default function DrugCard() {
-    const today = new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
-    const [medications, setMedications] = useState(() => {
-        const stored = localStorage.getItem("medications");
-        return stored ? JSON.parse(stored) : [];
-    });
-    const [selectedDay, setSelectedDay] = useState(new Date());
+export default function DrugForm({ initialValues, onSubmit, onCancel, submitLabel = "Guardar" }) {
+  const init = useMemo(() => ({
+    drugName: "",
+    description: "",
+    dosage: "",
+    frequencyHours: "",
+    nextIntakeTime: "",
+    startDate: "",
+    endDate: "",
+    activeReminder: true,
+    ...initialValues
+  }), [initialValues]);
 
-    useEffect(() => {
-        localStorage.setItem("medications", JSON.stringify(medications));
-    }, [medications]);
+  const [form, setForm] = useState(init);
+  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
 
-    const handleTake = (id) => setMedications(prev => prev.map(med => med.id === id ? { ...med, taken: true } : med));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const payload = {
+      drugName: form.drugName,
+      description: form.description || "",
+      dosage: form.dosage,
+      frequencyHours: form.frequencyHours ? parseInt(form.frequencyHours, 10) : null,
+      nextIntakeTime: form.nextIntakeTime?.length === 5 ? `${form.nextIntakeTime}:00` : form.nextIntakeTime || "",
+      startDate: form.startDate || null,
+      endDate: form.endDate || null,
+      active: true,
+      activeReminder: !!form.activeReminder
+    };
+    onSubmit(payload);
+  };
 
-    const addMedication = (newMed) => setMedications(prev => [...prev, newMed]);
-
-    const handleEdit = (id, updatedMed) => setMedications(prev => prev.map(med => med.id === id ? { ...med, ...updatedMed } : med));
-
-    const handleDelete = (id) => setMedications(prev => prev.filter(med => med.id !== id));
-
-    return (
-        <section className="max-w-5xl mx-auto p-6">
-            <section className="mb-10">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">Recordatorios</h1>
-                <p className="text-blue-600 text-lg mt-4">Hoy, {today}</p>
-            </section>
-
-            <AddDrug addMedication={addMedication} />
-
-            <div className="md:flex md:gap-16">
-                <section className="md:w-1/2 md:pr-12 md:border-r md:border-gray-300 mb-10 md:mb-0">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-8">No tomada</h2>
-                    {medications.filter(med => !med.taken).map(med => (
-                        <Card
-                            key={med.id}
-                            id={med.id}
-                            title={med.title}
-                            time={med.time}
-                            startDate={med.startDate}
-                            endDate={med.endDate}
-                            frequency={med.frequency}
-                            next={med.next}
-                            taken={med.taken}
-                            onTake={() => handleTake(med.id)}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                        />
-                    ))}
-                </section>
-
-                <section className="md:w-1/2 md:pl-8">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-8">Tomada</h2>
-                    {medications.filter(med => med.taken).map(med => (
-                        <Card
-                            key={med.id}
-                            id={med.id}
-                            title={med.title}
-                            taken={med.taken}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                        />
-                    ))}
-                </section>
-            </div>
-
-            <div className="mt-10">
-                <Calendar
-                    medications={medications}
-                    selectedDay={selectedDay}
-                    setSelectedDay={setSelectedDay}
-                />
-            </div>
-        </section>
-    );
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3" aria-labelledby="drug-form-title">
+      <h2 id="drug-form-title" className="sr-only">Formulario de medicación</h2>
+      <Input label="Nombre del medicamento" value={form.drugName} onChange={update("drugName")} required />
+      <Input label="Descripción" value={form.description} onChange={update("description")} />
+      <Input label="Dosis" value={form.dosage} onChange={update("dosage")} required />
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Hora de toma" type="time" value={form.nextIntakeTime} onChange={update("nextIntakeTime")} required />
+        <Input label="Frecuencia (horas)" type="number" value={form.frequencyHours} onChange={update("frequencyHours")} required />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Fecha inicio" type="date" value={form.startDate} onChange={update("startDate")} required />
+        <Input label="Fecha fin" type="date" value={form.endDate} onChange={update("endDate")} />
+      </div>
+      <div className="flex items-center gap-2">
+        <input id="activeReminder" type="checkbox" checked={!!form.activeReminder} onChange={update("activeReminder")} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+        <label htmlFor="activeReminder" className="text-sm text-gray-800">Recordatorio activo</label>
+      </div>
+      <div className="flex justify-end gap-2 pt-2">
+        {onCancel && <Button type="button" className="bg-gray-200 text-gray-700" onClick={onCancel}>Cancelar</Button>}
+        <Button type="submit">{submitLabel}</Button>
+      </div>
+    </form>
+  );
 }
