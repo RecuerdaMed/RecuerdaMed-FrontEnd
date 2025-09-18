@@ -1,21 +1,24 @@
-import { createBrowserRouter } from "react-router-dom";
-import Dashboard from "../pages/Dashboard.jsx";
-import App from "../App.jsx";
-import AddDrug from "../pages/AddDrug.jsx";
-// import Login from "../pages/Login";
-// import Register from "../pages/Register";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "../Layout";
+import Dashboard from "../pages/Dashboard";
+import AddDrug from "../pages/AddDrug";
+import DrugList from "../components/medication/DrugList";
+import Calendar from "../components/ui/Calendar";
 
-const RoutesApp = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Layout />,
     children: [
-      {
-        index: true, // Ruta raíz → Dashboard
-        element: <Dashboard/>,
-      }
+      { index: true, element: <Dashboard /> },
+      { path: "medications", element: <DrugList /> },
+      { path: "add-drug", element: <AddDrug /> },
+      { path: "calendar", element: <Calendar /> },
+      { path: "settings", element: <div className="p-4">Ajustes</div> },
     ],
   },
 ]);
 
-export default RoutesApp;
+export default function AppRoutes() {
+  return <RouterProvider router={router} />;
+}
