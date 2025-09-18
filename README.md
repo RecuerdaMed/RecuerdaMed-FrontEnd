@@ -134,7 +134,6 @@ RECUERDAMED-FR.../
 2. Registrar medicamentos con su dosis y horario
 3. Consultar el listado de medicamentos activos
 4. Marcar cada dosis como "tomada" en su momento
-5. Visualizar el historial de tomas y dosis restantes
 
 ---
 
@@ -142,7 +141,7 @@ RECUERDAMED-FR.../
 
 - **react-router-dom** → Navegación en la aplicación
 - **axios** → Cliente HTTP para consumir la API
-- **vitest / @testing-library/jest-dom** → Ejecución de los tests del frontend
+- **vitest / testing-library-react** → Ejecución de los tests del frontend
 
 ---
 
