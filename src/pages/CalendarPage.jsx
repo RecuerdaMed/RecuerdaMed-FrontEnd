@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllDrugs } from "../services/Services";
-import Calendar from "../components/ui/Calendar";
+import Calendar from "../components/medication/DrugCalendar";
 
 export default function CalendarPage() {
   const [meds, setMeds] = useState([]);

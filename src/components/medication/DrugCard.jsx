@@ -36,7 +36,7 @@ export default function DrugForm({ initialValues, onSubmit, onCancel, submitLabe
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3" aria-labelledby="drug-form-title">
-      <h2 id="drug-form-title" className="sr-only">Formulario de medicación</h2>
+      <h2 id="drug-form-title" className="sr-only">Formulario de medicamentos</h2>
       <Input label="Nombre del medicamento" value={form.drugName} onChange={update("drugName")} required />
       <Input label="Descripción" value={form.description} onChange={update("description")} />
       <Input label="Dosis" value={form.dosage} onChange={update("dosage")} required />

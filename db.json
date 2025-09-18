@@ -1,0 +1,82 @@
+{
+  "medicamentos": [
+    {
+      "id": "1",
+      "drugName": "Paracetamol",
+      "description": "Para dolores de cabeza",
+      "dosage": "500mg",
+      "frequencyHours": 8,
+      "nextIntakeTime": "09:00",
+      "startDate": "2025-09-18",
+      "endDate": "2025-09-25",
+      "active": true,
+      "activeReminder": true,
+      "taken": true
+    },
+    {
+      "id": "2",
+      "drugName": "Ibuprofeno",
+      "description": "Antiinflamatorio",
+      "dosage": "400mg",
+      "frequencyHours": 12,
+      "nextIntakeTime": "14:00",
+      "startDate": "2025-09-18",
+      "endDate": "2025-09-22",
+      "active": true,
+      "activeReminder": true,
+      "taken": true
+    },
+    {
+      "id": "3",
+      "drugName": "Vitamina D",
+      "description": "Suplemento vitamínico",
+      "dosage": "1000 UI",
+      "frequencyHours": 24,
+      "nextIntakeTime": "08:00",
+      "startDate": "2025-09-15",
+      "endDate": "2025-12-15",
+      "active": true,
+      "activeReminder": true,
+      "taken": true
+    },
+    {
+      "id": "4",
+      "drugName": "Aspirina",
+      "description": "Anticoagulante",
+      "dosage": "100mg",
+      "frequencyHours": 24,
+      "nextIntakeTime": "20:00",
+      "startDate": "2025-09-10",
+      "endDate": null,
+      "active": false,
+      "activeReminder": false,
+      "taken": true
+    },
+    {
+      "drugName": "enalapril",
+      "description": "dfhsdjkfhksj",
+      "dosage": "45000",
+      "frequencyHours": 4,
+      "nextIntakeTime": "23:00:00",
+      "startDate": "2025-09-18",
+      "endDate": "2025-12-31",
+      "active": true,
+      "activeReminder": true,
+      "id": "3a32",
+      "taken": true
+    },
+    {
+      "drugName": "papa",
+      "description": "hfjkfhk",
+      "dosage": "fhjkfhj",
+      "frequencyHours": 4,
+      "nextIntakeTime": "23:16:00",
+      "startDate": "2025-09-18",
+      "endDate": "2025-09-18",
+      "active": true,
+      "activeReminder": true,
+      "id": "f2dc",
+      "taken": true
+    }
+  ]
+}
