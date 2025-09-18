@@ -15,10 +15,11 @@ export default function Card({ title, time, next, taken, onTake }) {
                 {!taken && (
                     <Button
                         onClick={onTake}
-                        className="w-auto py-1 px-4 rounded-full"
+                        className={`w-auto py-1 px-4 rounded-full ${taken ? 'bg-green-600 hover:bg-green-700' : ''}`}
                     >
                         Tomada
                     </Button>
+
                 )}
             </section>
 
