@@ -1,5 +1,5 @@
 // Configuración base para luego el backend con Spring Boot
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = "http://localhost:5173/";
 
 // Headers estándar par todas las requests
 const defaultHeaders = {
@@ -7,7 +7,7 @@ const defaultHeaders = {
   Accept: "application/json",
 };
 
-// Función helper para manejar errores de forma consistente
+
 const handleResponse = async (response) => {
   if (!response.ok) {
     const errorText = await response.text();
@@ -25,7 +25,7 @@ const handleResponse = async (response) => {
 };
 
 /* Funciones principales para la API de medicaciones de May y Julia
-GET DE TODAS LAS MEDICACIONES: GET/api/drugs */
+GET DE TODAS LAS MEDICACIONES: GET/drugs */
 export const getDrugs = async () => {
   try {
     const response = await fetch(`${API_BASE}/drugs`, {
@@ -36,13 +36,12 @@ export const getDrugs = async () => {
   } catch (error) {
     console.error('Error fetching drugs; ', error);
 
-    // Pruebo devolviendo datos mock mientras el backend no esté listo
-    return getMockDrugs();
+  
   }
 };
 
 /* Crear nueva medicación
-Endpoint esperado: POST /api/drugs*/
+Endpoint esperado: POST /drugs*/
 export const createDrug = async (drugData) => {
   try {
     const response = await fetch(`${API_BASE}/drugs`, {
@@ -59,7 +58,7 @@ export const createDrug = async (drugData) => {
 };
 
 /* Marcar medicación como tomada
-Endpoint esperado: PUT /api/drugs/{id}/taken */
+Endpoint esperado: PUT /drugs/{id}/taken */
 export const markDrugAsTaken = async (drugId) => {
   try {
     const response = await fetch(`${API_BASE}/drugs/${drugId}/taken`, {
@@ -103,65 +102,4 @@ export const updatedrug = async (drugId, drugData) => {
     console.error('Error updating drug:', error);
     throw error;
   }
-};
-/* Para ver que funciona // ============================================
-// MOCK DATA - Para desarrollo sin backend
-// ============================================
- * Datos mock para desarrollo paralelo
- * Estructura que esperamos del backend Spring Boot
- */
-const getMockDrugs = () => {
-  const now = new Date();
-  const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-  
-  return [
-    {
-      id: 1,
-      name: "Ibuprofeno",
-      dose: "500mg",
-      scheduledTime: "08:00",
-      duration: "7 días",
-      status: "PENDING",
-      scheduledDate: today,
-      takenAt: null,
-      createdAt: "2024-09-17T07:00:00Z",
-      updatedAt: "2024-09-17T07:00:00Z"
-    },
-    {
-      id: 2,
-      name: "Omeprazol",
-      dose: "20mg",
-      scheduledTime: "09:00",
-      duration: "3 meses",
-      status: "TAKEN",
-      scheduledDate: today,
-      takenAt: "2024-09-17T09:15:00Z",
-      createdAt: "2024-09-17T07:00:00Z",
-      updatedAt: "2024-09-17T09:15:00Z"
-    },
-    {
-      id: 3,
-      name: "Paracetamol",
-      dose: "1g",
-      scheduledTime: "14:30",
-      duration: "5 días",
-      status: "OVERDUE",
-      scheduledDate: today,
-      takenAt: null,
-      createdAt: "2024-09-17T07:00:00Z",
-      updatedAt: "2024-09-17T14:30:00Z"
-    },
-    {
-      id: 4,
-      name: "Vitamina D",
-      dose: "1000 UI",
-      scheduledTime: "20:00",
-      duration: "6 meses",
-      status: "PENDING",
-      scheduledDate: today,
-      takenAt: null,
-      createdAt: "2024-09-17T07:00:00Z",
-      updatedAt: "2024-09-17T07:00:00Z"
-    }
-  ];
 };
