@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "../Layout";
 import Dashboard from "../pages/Dashboard";
 import AddDrug from "../pages/AddDrug";
-import DrugList from "../components/medication/DrugList";
+import Medications from "../pages/Medications";
 import Calendar from "../components/ui/Calendar";
 
 const router = createBrowserRouter([
@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Dashboard /> },
-      { path: "medications", element: <DrugList /> },
+      { path: "medicaciones", element: <Medications /> },
       { path: "add-drug", element: <AddDrug /> },
       { path: "calendar", element: <Calendar /> },
       { path: "settings", element: <div className="p-4">Ajustes</div> },
