@@ -1,8 +1,8 @@
 import Header from './components/layout/Header';
-import Calendar from './components/ui/Calendar';
 import Footer from './components/layout/Footer';
 import { Outlet } from 'react-router-dom';
 import DrugCard from './components/medication/DrugCard';
+import Calendar from './components/ui/Calendar';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
 
       <main className="flex-grow p-6 bg-gray-100">
         <DrugCard />
-
+        <Calendar />
         <Outlet />
       </main>
 
