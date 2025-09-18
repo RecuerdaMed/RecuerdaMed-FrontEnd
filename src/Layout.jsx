@@ -16,7 +16,11 @@ export default function Layout() {
       <Header />
       <NavBar />
 
-      <main id="content" role="main" className="container mx-auto w-full max-w-6xl p-4 flex-1">
+      <main
+        id="content"
+        role="main"
+        className="container mx-auto w-full max-w-6xl p-4 flex-1"
+      >
         <Outlet />
       </main>
 
