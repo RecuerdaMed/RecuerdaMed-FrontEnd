@@ -167,11 +167,11 @@ export default function Calendar({ medications = [], selectedDay, setSelectedDay
 
           <section className="mt-3" aria-labelledby="day-meds-title">
             <h3 id="day-meds-title" className="font-semibold text-gray-800">
-              Medicamentos del día
+              Medicación del día hoy
             </h3>
 
             {medsOfDay.length === 0 ? (
-              <p className="text-sm text-gray-500 mt-1">No hay medicamentos pendientes</p>
+              <p className="text-sm text-gray-500 mt-1">No hay medicamentos pendientes de tomar</p>
             ) : (
               <ul className="mt-2 divide-y divide-gray-200" role="list">
                 {medsOfDay.map((med) => (

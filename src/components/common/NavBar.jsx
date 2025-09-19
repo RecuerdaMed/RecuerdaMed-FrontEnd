@@ -25,7 +25,7 @@ export default function NavBar() {
           </li>
           <li role="none">
             <NavLink to="/medicamentos" className={linkClass} role="menuitem">
-              Medicamentos
+              Mi medicación
             </NavLink>
           </li>
         </ul>

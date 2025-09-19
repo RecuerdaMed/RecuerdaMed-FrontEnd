@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server.js",
-    "server:simple": "json-server --watch db.json --port 8080"
+    "server:simple": "json-server --watch db.json --port 8080",
+    "make:beep4": "node scripts/create-beep4.js"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
