@@ -26,8 +26,8 @@ export default function DrugForm({ initialValues, onSubmit, onCancel, submitLabe
       dosage: form.dosage,
       frequencyHours: form.frequencyHours ? parseInt(form.frequencyHours, 10) : null,
       nextIntakeTime: form.nextIntakeTime?.length === 5 ? `${form.nextIntakeTime}:00` : form.nextIntakeTime || "",
-      startDate: form.startDate || null,
-      endDate: form.endDate || null,
+      startDate: form.startDate ? `${form.startDate}T00:00:00` : null,
+      endDate: form.endDate ? `${form.endDate}T00:00:00` : null,
       active: true,
       activeReminder: !!form.activeReminder
     };

@@ -26,7 +26,7 @@ export const updateDrug = async (id, payload) => {
 export const markAsTaken = async (id) => {
   try {
     console.log('Marcando como tomado medicamento ID:', id);
-    const { data } = await api.patch(`${API_PATH}/${id}`, { taken: true });
+    const { data } = await api.put(`${API_PATH}/${id}/tomado`, { taken: true });
     console.log('Éxito al marcar como tomado');
     return data;
   } catch (error) {
