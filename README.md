@@ -12,7 +12,10 @@ El proyecto busca mejorar la experiencia en salud digital, fomentando la **respo
 
 ## 📸 Capturas del Proyecto
 
-*(Aquí irán capturas de pantalla de la app funcionando: formulario de registro, listado de medicamentos, recordatorio visual, etc.)*
+<img width="1093" height="898" alt="image" src="https://github.com/user-attachments/assets/b943a2cd-b83e-4e89-a5bc-921774043fec" />
+<img width="1205" height="622" alt="image" src="https://github.com/user-attachments/assets/9c8404de-6be4-49bc-bfde-74285608b7f2" />
+
+
 
 ---
 
