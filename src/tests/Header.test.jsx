@@ -4,13 +4,13 @@ import Header from "../components/common/Header.jsx";
 describe("Header", () => {
   test("render the logo with the correct alt", () => {
     render(<Header />);
-    const logo = screen.getByAltText(/sanitas/i);
+    const logo = screen.getByRole("img", { name: /sanitas/i });
     expect(logo).toBeInTheDocument();
   });
 
   test("The logo is inside a link to the main page.", () => {
     render(<Header />);
-    const logo = screen.getByAltText(/sanitas/i);
+    const logo = screen.getByRole("img", { name: /sanitas/i });
     const link = logo.closest("a");
     expect(link).toHaveAttribute("href", "/");
   });

@@ -51,7 +51,7 @@ class NotificationService {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.1);
-    } catch {}
+    } catch {e}
   }
 
   speakReminder(text) {

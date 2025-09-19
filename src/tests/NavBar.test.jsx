@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import NavBar from "../components/common/NavBar.jsx";
 
 describe("NavBar", () => {
-  test("renders the Today and Medications links", () => {
+  test("renders the Today and 'Mi medicación' links", () => {
     render(
       <MemoryRouter>
         <NavBar />
@@ -11,7 +11,7 @@ describe("NavBar", () => {
     );
 
     expect(screen.getByRole("menuitem", { name: /hoy/i })).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: /medicamentos/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /mi medicación/i })).toBeInTheDocument();
   });
 
   test("marks the active link when the route is '/'", () => {
@@ -20,19 +20,17 @@ describe("NavBar", () => {
         <NavBar />
       </MemoryRouter>
     );
-
     const link = screen.getByRole("menuitem", { name: /hoy/i });
     expect(link).toHaveClass("bg-[#295ADC] text-white");
   });
 
-  test("marks the active link when the path is '/medicines'", () => {
+  test("marks the active link when the path is '/medicamentos'", () => {
     render(
       <MemoryRouter initialEntries={["/medicamentos"]}>
         <NavBar />
       </MemoryRouter>
     );
-
-    const link = screen.getByRole("menuitem", { name: /medicamentos/i });
+    const link = screen.getByRole("menuitem", { name: /mi medicación/i });
     expect(link).toHaveClass("bg-[#295ADC] text-white");
   });
 });
