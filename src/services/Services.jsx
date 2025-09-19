@@ -1,0 +1,64 @@
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080",
+  headers: { "Content-Type": "application/json" },
+});
+
+const API_PATH = "/medicamentos";
+
+export const getAllDrugs = async () => {
+  const { data } = await api.get(API_PATH);
+  return data;
+};
+
+export const createDrug = async (payload) => {
+  const { data } = await api.post(API_PATH, payload);
+  return data;
+};
+
+export const updateDrug = async (id, payload) => {
+  const { data } = await api.put(`${API_PATH}/${id}`, payload);
+  return data;
+};
+
+// PARA DESARROLLO CON JSON-SERVER
+export const markAsTaken = async (id) => {
+  try {
+    console.log('Marcando como tomado medicamento ID:', id);
+    const { data } = await api.put(`${API_PATH}/${id}/tomado`, { taken: true });
+    console.log('Éxito al marcar como tomado');
+    return data;
+  } catch (error) {
+    console.error('Error marking as taken:', error);
+    throw error;
+  }
+};
+
+// PARA BACKEND JAVA REAL (comentado por ahora)
+// export const markAsTaken = async (id) => {
+//   try {
+//     console.log('Marcando como tomado medicamento ID:', id);
+//     await api.put(`${API_PATH}/${id}/tomado`);
+//     console.log('Éxito al marcar como tomado');
+//   } catch (error) {
+//     console.error('Error marking as taken:', error);
+//     throw error;
+//   }
+// };
+
+export const markAsNotTaken = async (id) => {
+  try {
+    console.log('Marcando como NO tomado:', id);
+    const { data } = await api.patch(`${API_PATH}/${id}`, { taken: false });
+    console.log('Éxito al marcar como NO tomado');
+    return data;
+  } catch (error) {
+    console.error('Error marking as not taken:', error);
+    throw error;
+  }
+};
+
+export const deleteDrug = async (id) => {
+  await api.delete(`${API_PATH}/${id}`);
+};
