@@ -3,7 +3,7 @@ export function WelcomeMessage() {
     <section className="text-center py-8 mb-8 bg-gradient-to-b from-blue-50 to-white rounded-xl mx-4">
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl md:text-4xl font-light text-gray-800 mb-4 leading-relaxed">
-          ¡Bienvenido a tu gestor de medicación!
+          ¡Bienvenido a tu gestor de medicación RecuerdaMed!
         </h1>
         <p className="text-lg md:text-xl text-blue-600 mb-6 leading-relaxed">
           Nunca más olvides una toma

@@ -201,7 +201,7 @@ export default function Dashboard() {
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold text-gray-800">
-                    Medicamentos pendientes
+                    Medicación pendiente
                   </h2>
                   {pendingCount > 0 && (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
@@ -222,19 +222,19 @@ export default function Dashboard() {
                 {!loading && pendingCount === 0 && (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-8 h-8 text-emerald-700" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
                     <h3 className="text-lg font-medium text-gray-800 mb-2">
-                      ¡Perfecto! No tienes medicamentos pendientes hoy
+                      ¡Perfecto! No tienes medicación pendiente hoy
                     </h3>
                     <p className="text-gray-600 mb-6">
                       Has cumplido con tu tratamiento del día
                     </p>
                     <Link to="/medicamentos">
                       <Button variant="primary">
-                        Gestionar medicamentos
+                        Gestionar medicación
                       </Button>
                     </Link>
                   </div>
