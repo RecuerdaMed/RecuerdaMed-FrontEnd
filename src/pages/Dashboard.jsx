@@ -1,36 +1,71 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAllDrugs, markAsTaken } from "../services/Services";
-import { parseISO, isSameDay } from "date-fns";
+import { notificationService } from "../services/NotificationService";
+import { parseISO, isSameDay, format } from "date-fns";
 import { es } from "date-fns/locale";
-import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import { Bell, Clock, Repeat } from "lucide-react";
 import Button from "../components/ui/Button";
 
 export default function Dashboard() {
   const [drugs, setDrugs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
   const today = useMemo(() => new Date(), []);
   const todayLabel = useMemo(
     () => format(today, "EEEE, d 'de' MMMM", { locale: es }),
     [today]
   );
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       const data = await getAllDrugs();
-      setDrugs(Array.isArray(data) ? data : []);
+      const medicationsList = Array.isArray(data) ? data : [];
+      setDrugs(medicationsList);
+      if (notificationsEnabled && medicationsList.length > 0) {
+        notificationService.startMedicationChecker(medicationsList);
+      }
     } catch (err) {
       setError("Error al cargar los medicamentos. Verifica tu conexión.");
       console.error(err);
     } finally {
       setLoading(false);
     }
+  }, [notificationsEnabled]);
+
+  useEffect(() => {
+    load();
+    return () => {
+      notificationService.clearAllAlarms();
+    };
+  }, [load]);
+
+  const enableNotifications = async () => {
+    try {
+      const granted = await notificationService.requestPermission();
+      if (granted) {
+        setNotificationsEnabled(true);
+        notificationService.startMedicationChecker(drugs);
+        setError("success:Notificaciones activadas correctamente");
+        setTimeout(() => setError(""), 4000);
+      } else {
+        setError("Los permisos de notificación son necesarios para recibir recordatorios automáticos. Puedes habilitarlos en la configuración de tu navegador.");
+      }
+    } catch (err) {
+      setError("Error al habilitar notificaciones: " + err.message);
+    }
   };
 
-  useEffect(() => { load(); }, []);
+  const disableNotifications = () => {
+    notificationService.clearAllAlarms();
+    setNotificationsEnabled(false);
+    setError("info:Notificaciones desactivadas");
+    setTimeout(() => setError(""), 3000);
+  };
 
   const isDueToday = (d) => {
     const start = d.startDate ? parseISO(d.startDate) : null;
@@ -40,111 +75,282 @@ export default function Dashboard() {
     return inRange && !d.taken;
   };
 
-  const todays = drugs.filter(isDueToday).sort((a, b) => (a.nextIntakeTime || "").localeCompare(b.nextIntakeTime || ""));
-  const upcoming = todays.slice().filter(d => d.nextIntakeTime).sort((a, b) => a.nextIntakeTime.localeCompare(b.nextIntakeTime));
+  const todays = drugs
+    .filter(isDueToday)
+    .sort((a, b) => (a.nextIntakeTime || "").localeCompare(b.nextIntakeTime || ""));
+
+  const upcoming = todays
+    .slice()
+    .filter((d) => d.nextIntakeTime)
+    .sort((a, b) => a.nextIntakeTime.localeCompare(b.nextIntakeTime));
+
   const pendingCount = todays.length;
 
   const takeNow = async (id) => {
     try {
       await markAsTaken(id);
       await load();
+      notificationService.speakReminder("Medicamento registrado como tomado");
     } catch (err) {
-      setError("Error al marcar el medicamento como tomado");
+      setError("Error al registrar el medicamento como tomado");
       console.error(err);
     }
   };
 
+  const testNotification = () => {
+    notificationService.showBrowserNotification("Prueba de recordatorio", {
+      body: "El sistema de notificaciones funciona correctamente"
+    });
+    notificationService.speakReminder("Prueba de recordatorio por voz");
+    notificationService.playAlarmSound();
+  };
+
+  const getErrorType = (errorMsg) => {
+    if (errorMsg.startsWith("success:")) return "success";
+    if (errorMsg.startsWith("info:")) return "info";
+    return "error";
+  };
+
+  const cleanErrorMessage = (errorMsg) => {
+    return errorMsg.replace(/^(success:|info:|error:)/, "");
+  };
+
   return (
-    <main className="mx-auto max-w-5xl p-4 space-y-6" aria-labelledby="home-title">
-      <header className="space-y-2">
-        <h1 id="home-title" className="text-2xl sm:text-3xl font-bold text-gray-900">Hoy</h1>
-        <p className="text-blue-700 text-lg">{todayLabel}</p>
-
-        {error && (
-          <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
-            {error}
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header */}
+        <header className="mb-8">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-light text-gray-800 mb-2">Recordatorios</h1>
+            <p className="text-lg text-blue-600 font-medium">{todayLabel}</p>
           </div>
-        )}
-      </header>
+          
+          {error && (
+            <div className={`mb-6 p-4 rounded-lg border-l-4 ${
+              getErrorType(error) === "success" 
+                ? "bg-green-50 border-green-400 text-green-700" 
+                : getErrorType(error) === "info"
+                ? "bg-blue-50 border-blue-400 text-blue-700"
+                : "bg-red-50 border-red-400 text-red-700"
+            }`}>
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  {getErrorType(error) === "success" && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {getErrorType(error) === "info" && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {getErrorType(error) === "error" && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium">{cleanErrorMessage(error)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </header>
 
-      <section aria-labelledby="quick-actions" className="flex flex-wrap gap-3">
-        <Link to="/medicamentos">
-          <Button>Gestionar medicamentos</Button>
-        </Link>
-        <Link to="/calendar">
-          <Button className="bg-blue-600 text-white border border-blue-600 hover:bg-blue-700">
-            Calendario
-          </Button>
-        </Link>
-      </section>
+        {/* Quick Actions */}
+        <section className="mb-8">
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/medicamentos">
+              <Button variant="primary" size="large">
+                Gestionar medicamentos
+              </Button>
+            </Link>
+            <Link to="/calendar">
+              <Button variant="secondary" size="large">
+                Ver calendario
+              </Button>
+            </Link>
+          </div>
+        </section>
 
-      <section aria-labelledby="pending-today" className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h2 id="pending-today" className="text-xl font-semibold text-gray-900">Pendientes de hoy</h2>
-          <span className="inline-flex items-center justify-center min-w-8 h-8 px-2 rounded-full bg-red-600 text-white text-sm">
-            {pendingCount}
-          </span>
-        </div>
-
-        {loading && <p role="status" className="text-gray-700">Cargando…</p>}
-
-        {!loading && !error && pendingCount === 0 && (
-          <div className="text-center py-6">
-            <p className="text-gray-700 mb-4">¡No tienes más medicamentos que tomar hoy!</p>
-            <div className="flex justify-center">
-              <Link to="/medicamentos">
-                <Button className="bg-green-600 text-white hover:bg-green-700">
-                  Añadir nuevo medicamento
-                </Button>
-              </Link>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Recordatorios automáticos */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bell className="w-8 h-8 text-blue-600" />
+                </div>
+                
+                <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                  Recordatorios automáticos
+                </h2>
+                
+                <div className="mb-6">
+                  {!notificationsEnabled ? (
+                    <Button 
+                      onClick={enableNotifications}
+                      variant="success"
+                      size="large"
+                      className="w-full"
+                    >
+                      Activar recordatorios
+                    </Button>
+                  ) : (
+                    <div className="space-y-3">
+                      <Button 
+                        onClick={disableNotifications}
+                        variant="dangerOutline"
+                        size="medium"
+                        className="w-full"
+                      >
+                        Desactivar recordatorios
+                      </Button>
+                      <Button 
+                        onClick={testNotification}
+                        variant="neutral"
+                        size="medium"
+                        className="w-full"
+                      >
+                        Probar notificación
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="text-sm text-gray-600 leading-relaxed">
+                  {notificationsEnabled 
+                    ? "Los recordatorios están activos. Recibirás alertas visuales y sonoras para no olvidar tu medicación."
+                    : "Activa los recordatorios para recibir alertas automáticas cuando sea la hora de tomar tu medicación."
+                  }
+                </div>
+              </div>
             </div>
           </div>
-        )}
 
-        {!loading && !error && (
-          <ul className="divide-y" role="list">
-            {todays.map(d => (
-              <li key={d.id} className="py-3 flex items-center justify-between gap-3">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    {d.drugName}{d.dosage ? ` · ${d.dosage}` : ""}
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    {d.nextIntakeTime ? `A las ${d.nextIntakeTime}` : "Sin hora"}
-                    {d.frequencyHours ? ` · cada ${d.frequencyHours}h` : ""}
-                  </p>
+          {/* Medicamentos pendientes y próximos */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Pendientes de hoy */}
+            <section className="bg-white rounded-xl shadow-sm border border-gray-200">
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Medicamentos pendientes
+                  </h2>
+                  {pendingCount > 0 && (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                      {pendingCount} pendiente{pendingCount !== 1 ? 's' : ''}
+                    </span>
+                  )}
                 </div>
-                <Button
-                  onClick={() => takeNow(d.id)}
-                  className="px-4 bg-green-600 hover:bg-green-700"
-                  disabled={loading}
-                >
-                  ✓ Tomada
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+              </div>
 
-      <section aria-labelledby="upcoming" className="bg-white rounded-lg border p-4">
-        <h2 id="upcoming" className="text-xl font-semibold text-gray-900 mb-3">Próximas tomas de hoy</h2>
-        {loading ? (
-          <p role="status" className="text-gray-700">Cargando próximas tomas...</p>
-        ) : upcoming.length === 0 ? (
-          <p className="text-gray-700">No hay próximas tomas programadas.</p>
-        ) : (
-          <ul className="grid sm:grid-cols-2 gap-3" role="list">
-            {upcoming.map(d => (
-              <li key={d.id} className="rounded-md border p-3 hover:bg-gray-50">
-                <p className="font-medium text-gray-900">{d.drugName}</p>
-                <p className="text-sm text-gray-700">{d.nextIntakeTime || "Sin hora"}</p>
-                {d.dosage && <p className="text-sm text-gray-600">{d.dosage}</p>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </main>
+              <div className="p-6">
+                {loading && (
+                  <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p className="mt-3 text-gray-600">Cargando medicamentos...</p>
+                  </div>
+                )}
+
+                {!loading && pendingCount === 0 && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-800 mb-2">
+                      ¡Perfecto! No tienes medicamentos pendientes hoy
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      Has cumplido con tu tratamiento del día
+                    </p>
+                    <Link to="/medicamentos">
+                      <Button variant="primary">
+                        Gestionar medicamentos
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+
+                {!loading && pendingCount > 0 && (
+                  <div className="space-y-4">
+                    {todays.map((d) => (
+                      <div key={d.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex-1">
+                          <div className="flex items-center mb-2">
+                            <div className="w-3 h-3 bg-orange-400 rounded-full mr-3"></div>
+                            <h3 className="font-semibold text-gray-800">
+                              {d.drugName}
+                            </h3>
+                            {d.dosage && (
+                              <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                {d.dosage}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-600 ml-6">
+                            {d.nextIntakeTime && (
+                              <span className="inline-flex items-center mr-4">
+                                <Clock className="w-4 h-4 mr-1" />
+                                {d.nextIntakeTime}
+                              </span>
+                            )}
+                            {d.frequencyHours && (
+                              <span className="inline-flex items-center">
+                                <Repeat className="w-4 h-4 mr-1" />
+                                Cada {d.frequencyHours}h
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => takeNow(d.id)}
+                          variant="success"
+                          disabled={loading}
+                          className="ml-4"
+                        >
+                          Marcar como tomada
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Próximas tomas */}
+            {upcoming.length > 0 && (
+              <section className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-100">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Próximas tomas programadas
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {upcoming.map((d) => (
+                      <div key={d.id} className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                        <div className="flex items-center mb-2">
+                          <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+                          <h3 className="font-medium text-gray-800">{d.drugName}</h3>
+                        </div>
+                        <div className="text-sm text-gray-600 ml-5">
+                          <p className="font-medium">{d.nextIntakeTime || "Sin hora especificada"}</p>
+                          {d.dosage && <p>{d.dosage}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

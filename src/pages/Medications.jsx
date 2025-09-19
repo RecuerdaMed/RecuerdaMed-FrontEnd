@@ -70,8 +70,8 @@ export default function Medications() {
   return (
     <main className="max-w-5xl mx-auto p-4 space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-gray-900">Medicamentos</h1>
-        <p className="text-gray-600">Gestiona tus medicamentos, horarios y dosis</p>
+        <h1 className="text-2xl font-semibold text-gray-900">Mi medicación</h1>
+        <p className="text-gray-600">Gestiona tu medicación, horarios y dosis</p>
         
         
         {error && (

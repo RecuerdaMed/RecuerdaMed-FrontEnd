@@ -22,9 +22,10 @@ export const updateDrug = async (id, payload) => {
   return data;
 };
 
+// PARA DESARROLLO CON JSON-SERVER
 export const markAsTaken = async (id) => {
   try {
-    console.log('Marcando como tomado:', id);
+    console.log('Marcando como tomado medicamento ID:', id);
     const { data } = await api.patch(`${API_PATH}/${id}`, { taken: true });
     console.log('Éxito al marcar como tomado');
     return data;
@@ -33,6 +34,18 @@ export const markAsTaken = async (id) => {
     throw error;
   }
 };
+
+// PARA BACKEND JAVA REAL (comentado por ahora)
+// export const markAsTaken = async (id) => {
+//   try {
+//     console.log('Marcando como tomado medicamento ID:', id);
+//     await api.put(`${API_PATH}/${id}/tomado`);
+//     console.log('Éxito al marcar como tomado');
+//   } catch (error) {
+//     console.error('Error marking as taken:', error);
+//     throw error;
+//   }
+// };
 
 export const markAsNotTaken = async (id) => {
   try {
