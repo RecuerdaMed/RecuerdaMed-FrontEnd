@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "server": "node server.js",
     "server:simple": "json-server --watch db.json --port 8080",
+    "test": "vitest
     "make:beep4": "node scripts/create-beep4.js"
   },
   "dependencies": {
@@ -23,6 +24,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react-swc": "^4.0.0",
@@ -34,6 +38,7 @@
     "json-server": "^1.0.0-beta.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "vitest": "^3.2.4"
   }
 }
