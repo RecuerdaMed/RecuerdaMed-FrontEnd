@@ -1,208 +1,193 @@
-import { useMemo, useState, useCallback } from "react";
-import {
-  startOfWeek,
-  addDays,
-  format,
-  addWeeks,
-  subWeeks,
-  isToday,
-  isSameDay,
-  parseISO,
-} from "date-fns";
-import { es } from "date-fns/locale";
+import { useState } from 'react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { ChevronLeft, ChevronRight, Clock, AlertCircle, CheckCircle } from 'lucide-react';
+import Button from '../ui/Button';
 
-export default function Calendar({ medications = [], selectedDay, setSelectedDay }) {
-  const [currentWeek, setCurrentWeek] = useState(new Date());
+export default function MedicationCalendar({ medications = [], selectedDay, setSelectedDay }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const startOfCurrentWeek = useMemo(
-    () => startOfWeek(currentWeek, { weekStartsOn: 1 }),
-    [currentWeek]
-  );
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(currentMonth);
+  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  const weekDays = useMemo(
-    () =>
-      Array.from({ length: 7 }, (_, i) => {
-        const day = addDays(startOfCurrentWeek, i);
-        return {
-          date: day,
-          key: format(day, "yyyy-MM-dd"),
-          letter: format(day, "EEEEE", { locale: es }).toUpperCase(),
-          number: format(day, "d", { locale: es }),
-          isToday: isToday(day),
-          isSelected: selectedDay ? isSameDay(day, selectedDay) : false,
-          fullLabel: format(day, "EEEE d 'de' MMMM 'de' yyyy", { locale: es }),
-        };
-      }),
-    [startOfCurrentWeek, selectedDay]
-  );
+  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
 
-  const handlePreviousWeek = () => setCurrentWeek((d) => subWeeks(d, 1));
-  const handleNextWeek = () => setCurrentWeek((d) => addWeeks(d, 1));
-  const goToToday = () => {
-    const today = new Date();
-    setCurrentWeek(today);
-    setSelectedDay(today);
-  };
-
-  const onDaySelect = useCallback(
-    (date) => {
-      setSelectedDay(date);
-    },
-    [setSelectedDay]
-  );
-
-  const handleKeyDown = (e) => {
-    const idx = weekDays.findIndex((d) => d.isSelected) ?? -1;
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      if (idx > 0) onDaySelect(weekDays[idx - 1].date);
-      else handlePreviousWeek();
-    }
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      if (idx >= 0 && idx < weekDays.length - 1) onDaySelect(weekDays[idx + 1].date);
-      else handleNextWeek();
-    }
-  };
-
-  const rangeLabel = `${format(startOfCurrentWeek, "d MMM", { locale: es })} – ${format(
-    addDays(startOfCurrentWeek, 6),
-    "d MMM yyyy",
-    { locale: es }
-  )}`;
-
-  const medsOfDay = useMemo(() => {
-    if (!selectedDay) return [];
-    return medications.filter((med) => {
-      const start = med.startDate ? parseISO(med.startDate) : null;
-      const end = med.endDate ? parseISO(med.endDate) : null;
-      if (!start) return false;
-      const afterStart = selectedDay >= start;
-      const beforeEnd = end ? selectedDay <= end : true;
-      return afterStart && beforeEnd && !med.taken;
+  // Obtener medicamentos para un día específico
+  const getMedicationsForDay = (day) => {
+    return medications.filter(med => {
+      const startDate = new Date(med.startDate);
+      const endDate = med.endDate ? new Date(med.endDate) : null;
+      return day >= startDate && (!endDate || day <= endDate) && med.active;
     });
-  }, [medications, selectedDay]);
+  };
+
+  const getDayStatus = (day) => {
+    const dayMeds = getMedicationsForDay(day);
+    if (dayMeds.length === 0) return 'none';
+    
+    const pending = dayMeds.filter(med => !med.taken).length;
+    const total = dayMeds.length;
+    
+    if (pending === 0) return 'completed';
+    if (pending === total) return 'pending';
+    return 'partial';
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'completed': return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case 'pending': return <AlertCircle className="w-4 h-4 text-orange-500" />;
+      case 'partial': return <Clock className="w-4 h-4 text-blue-500" />;
+      default: return null;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 border-green-300';
+      case 'pending': return 'bg-orange-100 border-orange-300';
+      case 'partial': return 'bg-blue-100 border-blue-300';
+      default: return 'bg-white border-gray-200';
+    }
+  };
 
   return (
-    <section aria-labelledby="calendar-title" className="container mx-auto p-4 max-w-lg">
-      <header className="flex items-center justify-between mb-4">
-        <h2 id="calendar-title" className="text-lg font-semibold text-gray-900">
-          Calendario
-        </h2>
-        <p className="text-sm text-gray-600" aria-live="polite">{rangeLabel}</p>
-      </header>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-5xl mx-auto">
+      {/* Header del calendario */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900">
+            {format(currentMonth, 'MMMM yyyy', { locale: es })}
+          </h2>
+          <div className="flex gap-3">
+            <Button variant="secondary" size="md" onClick={prevMonth}>
+              <ChevronLeft className="w-5 h-5" />
+              <span className="ml-1 hidden sm:inline">Anterior</span>
+            </Button>
+            <Button variant="secondary" size="md" onClick={nextMonth}>
+              <span className="mr-1 hidden sm:inline">Siguiente</span>
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
 
-      <nav
-        aria-label="Selector de semana"
-        className="flex items-center justify-between bg-[#F3F3F3] p-2 rounded-md"
-      >
-        <button
-          type="button"
-          onClick={handlePreviousWeek}
-          className="p-2 text-gray-700 hover:bg-[#E6E6E6] rounded-full transition-colors duration-200 text-lg"
-          aria-label="Semana anterior"
-        >
-          ←
-        </button>
+        {/* Leyenda */}
+        <div className="flex flex-wrap gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-600" />
+            <span>Completado</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-blue-500" />
+            <span>Parcial</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-orange-500" />
+            <span>Pendiente</span>
+          </div>
+        </div>
 
-        <ul
-          className="flex gap-1"
-          role="listbox"
-          aria-label="Días de la semana"
-          onKeyDown={handleKeyDown}
-        >
-          {weekDays.map((d) => (
-            <li key={d.key}>
-              <button
-                type="button"
-                role="option"
-                aria-selected={d.isSelected}
-                aria-current={d.isToday ? "date" : undefined}
-                aria-label={`${d.fullLabel}${d.isToday ? " (hoy)" : ""}`}
-                onClick={() => onDaySelect(d.date)}
-                className={[
-                  "w-12 h-16 flex flex-col items-center justify-center rounded-md",
-                  "transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer",
-                  d.isSelected
-                    ? "bg-[#295ADC] text-white shadow-lg scale-105"
-                    : d.isToday
-                    ? "bg-blue-50 text-[#295ADC] ring-2 ring-[#295ADC] ring-opacity-50 font-bold"
-                    : "bg-transparent text-gray-800 hover:bg-[#E6E6E6]",
-                ].join(" ")}
-              >
-                <span className="text-xs font-semibold mb-1">{d.letter}</span>
-                <span className="text-lg font-semibold">{d.number}</span>
-                {d.isToday && !d.isSelected && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute bottom-1 w-2 h-2 bg-[#295ADC] rounded-full animate-pulse"
-                  />
-                )}
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <button
-          type="button"
-          onClick={handleNextWeek}
-          className="p-2 text-gray-700 hover:bg-[#E6E6E6] rounded-full transition-colors duration-200 text-lg"
-          aria-label="Semana siguiente"
-        >
-          →
-        </button>
-      </nav>
-
-      {selectedDay && (
-        <section
-          aria-labelledby="selected-date-title"
-          className="mt-4 p-3 bg-white rounded-lg border border-gray-200 shadow-sm"
-        >
-          <p id="selected-date-title" className="text-sm text-gray-600">
-            Fecha seleccionada
-          </p>
-          <p className="font-semibold text-gray-900 capitalize">
-            {format(selectedDay, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
-          </p>
-
-          <section className="mt-3" aria-labelledby="day-meds-title">
-            <h3 id="day-meds-title" className="font-semibold text-gray-800">
-              Medicación del día hoy
+        {/* Día seleccionado info */}
+        {selectedDay && (
+          <div className="mt-6 bg-blue-50 rounded-lg p-4">
+            <h3 className="font-semibold text-blue-900 mb-3 text-lg">
+              {format(selectedDay, "EEEE, d 'de' MMMM", { locale: es })}
             </h3>
-
-            {medsOfDay.length === 0 ? (
-              <p className="text-sm text-gray-500 mt-1">No hay medicamentos pendientes de tomar</p>
-            ) : (
-              <ul className="mt-2 divide-y divide-gray-200" role="list">
-                {medsOfDay.map((med) => (
-                  <li
-                    key={med.id}
-                    className="py-2 flex items-center justify-between"
-                    aria-label={`${med.drugName} ${med.dosage ?? ""}`}
-                  >
+            <div className="space-y-3">
+              {getMedicationsForDay(selectedDay).map(med => (
+                <div key={med.id} className="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-5 h-5 text-gray-500" />
                     <div>
-                      <p className="font-medium text-gray-900">{med.drugName}</p>
-                      <p className="text-sm text-gray-600">
-                        {med.dosage ?? ""} {med.nextIntakeTime ? `· ${med.nextIntakeTime}` : ""}
-                      </p>
+                      <span className="font-medium text-gray-900">{med.drugName}</span>
+                      <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                        {med.dosage}
+                      </span>
                     </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </section>
-      )}
-
-      <div className="mt-4 text-center">
-        <button
-          type="button"
-          onClick={goToToday}
-          className="px-4 py-2 text-sm text-[#295ADC] hover:bg-blue-50 rounded-lg transition-colors duration-200"
-        >
-          Ir a hoy
-        </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-600">{med.nextIntakeTime}</span>
+                    {med.taken ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5 text-orange-500" />
+                    )}
+                  </div>
+                </div>
+              ))}
+              {getMedicationsForDay(selectedDay).length === 0 && (
+                <p className="text-gray-600 text-center py-4">
+                  No hay medicamentos programados para este día
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-    </section>
+
+      {/* Días de la semana */}
+      <div className="grid grid-cols-7 border-b border-gray-200">
+        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+          <div key={day} className="p-4 text-center font-semibold text-gray-700 bg-gray-50 text-base">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Días del mes */}
+      <div className="grid grid-cols-7">
+        {monthDays.map(day => {
+          const dayMeds = getMedicationsForDay(day);
+          const status = getDayStatus(day);
+          const isSelected = selectedDay && isSameDay(day, selectedDay);
+          const isCurrentDay = isToday(day);
+
+          return (
+            <button
+              key={day.toString()}
+              onClick={() => setSelectedDay(day)}
+              className={`
+                p-4 min-h-[120px] border-b border-r border-gray-200 text-left hover:bg-gray-50 
+                transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500
+                ${isSelected ? 'bg-blue-100 border-blue-300 ring-2 ring-blue-500' : ''}
+                ${isCurrentDay ? 'bg-yellow-50 font-bold' : ''}
+                ${getStatusColor(status)}
+              `}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className={`
+                  text-lg font-semibold
+                  ${isCurrentDay ? 'text-blue-600' : 'text-gray-900'}
+                  ${isSelected ? 'text-blue-800' : ''}
+                `}>
+                  {format(day, 'd')}
+                </span>
+                {getStatusIcon(status)}
+              </div>
+
+              {/* Medicamentos del día */}
+              {dayMeds.length > 0 && (
+                <div className="space-y-1">
+                  {dayMeds.slice(0, 2).map(med => (
+                    <div key={med.id} className="text-xs bg-white rounded px-2 py-1 truncate">
+                      <span className={med.taken ? 'line-through text-gray-500' : 'text-gray-800'}>
+                        {med.drugName}
+                      </span>
+                    </div>
+                  ))}
+                  {dayMeds.length > 2 && (
+                    <div className="text-xs text-gray-500 text-center font-medium">
+                      +{dayMeds.length - 2} más
+                    </div>
+                  )}
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }

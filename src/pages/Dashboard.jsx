@@ -6,6 +6,7 @@ import { es } from "date-fns/locale";
 import { Link } from "react-router-dom";
 import { Bell, Clock, Repeat } from "lucide-react";
 import Button from "../components/ui/Button";
+import { WelcomeMessage } from "../components/ui/WelcomeMessage";
 
 export default function Dashboard() {
   const [drugs, setDrugs] = useState([]);
@@ -118,79 +119,46 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="mb-8">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-light text-gray-800 mb-2">Recordatorios</h1>
-            <p className="text-lg text-blue-600 font-medium">{todayLabel}</p>
-          </div>
-          
-          {error && (
-            <div className={`mb-6 p-4 rounded-lg border-l-4 ${
-              getErrorType(error) === "success" 
-                ? "bg-green-50 border-green-400 text-green-700" 
-                : getErrorType(error) === "info"
-                ? "bg-blue-50 border-blue-400 text-blue-700"
-                : "bg-red-50 border-red-400 text-red-700"
-            }`}>
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  {getErrorType(error) === "success" && (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                  {getErrorType(error) === "info" && (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                  {getErrorType(error) === "error" && (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium">{cleanErrorMessage(error)}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </header>
-
-        {/* Quick Actions */}
-        <section className="mb-8">
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/medicamentos">
-              <Button variant="primary" size="large">
-                Gestionar medicamentos
-              </Button>
-            </Link>
-            <Link to="/calendar">
-              <Button variant="secondary" size="large">
-                Ver calendario
-              </Button>
-            </Link>
-          </div>
-        </section>
+        <WelcomeMessage />
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Recordatorios automáticos */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
+            <div className="text-left">
+              <h1 className="text-3xl font-light text-gray-800 mb-1">Recordatorios</h1>
+              <p className="text-lg text-blue-600 font-medium">{todayLabel}</p>
+
+              {error && (
+                <div
+                  className={`mt-4 p-4 rounded-lg border-l-4 ${getErrorType(error) === "success"
+                      ? "bg-green-50 border-green-400 text-green-700"
+                      : getErrorType(error) === "info"
+                        ? "bg-blue-50 border-blue-400 text-blue-700"
+                        : "bg-red-50 border-red-400 text-red-700"
+                    }`}
+                >
+                  <p className="text-sm font-medium">{cleanErrorMessage(error)}</p>
+                </div>
+              )}
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link to="/medicamentos">
+                  <Button variant="primary" size="lg">Mi medicación</Button>
+                </Link>
+                <Link to="/calendar">
+                  <Button variant="secondary" size="lg">Ver calendario</Button>
+                </Link>
+              </div>
+            </div>
+
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Bell className="w-8 h-8 text-blue-600" />
                 </div>
-                
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  Recordatorios automáticos
-                </h2>
-                
+                <h2 className="text-xl font-semibold text-gray-800 mb-3">Recordatorios automáticos</h2>
                 <div className="mb-6">
                   {!notificationsEnabled ? (
-                    <Button 
+                    <Button
                       onClick={enableNotifications}
                       variant="success"
                       size="large"
@@ -200,7 +168,7 @@ export default function Dashboard() {
                     </Button>
                   ) : (
                     <div className="space-y-3">
-                      <Button 
+                      <Button
                         onClick={disableNotifications}
                         variant="dangerOutline"
                         size="medium"
@@ -208,7 +176,7 @@ export default function Dashboard() {
                       >
                         Desactivar recordatorios
                       </Button>
-                      <Button 
+                      <Button
                         onClick={testNotification}
                         variant="neutral"
                         size="medium"
@@ -219,20 +187,16 @@ export default function Dashboard() {
                     </div>
                   )}
                 </div>
-                
                 <div className="text-sm text-gray-600 leading-relaxed">
-                  {notificationsEnabled 
+                  {notificationsEnabled
                     ? "Los recordatorios están activos. Recibirás alertas visuales y sonoras para no olvidar tu medicación."
-                    : "Activa los recordatorios para recibir alertas automáticas cuando sea la hora de tomar tu medicación."
-                  }
+                    : "Activa los recordatorios para recibir alertas automáticas cuando sea la hora de tomar tu medicación."}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Medicamentos pendientes y próximos */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Pendientes de hoy */}
+          <div className="lg:col-span-2 space-y-8 mt-10 lg:mt-20">
             <section className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
@@ -322,7 +286,6 @@ export default function Dashboard() {
               </div>
             </section>
 
-            {/* Próximas tomas */}
             {upcoming.length > 0 && (
               <section className="bg-white rounded-xl shadow-sm border border-gray-200">
                 <div className="p-6 border-b border-gray-100">

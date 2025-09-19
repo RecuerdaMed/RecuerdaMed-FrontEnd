@@ -1,16 +1,16 @@
 {
   "medicamentos": [
     {
-      "id": "1",
       "drugName": "Paracetamol",
       "description": "Para dolores de cabeza",
       "dosage": "500mg",
       "frequencyHours": 8,
-      "nextIntakeTime": "09:00",
+      "nextIntakeTime": "09:00:00",
       "startDate": "2025-09-18",
       "endDate": "2025-09-25",
       "active": true,
-      "activeReminder": true,
+      "activeReminder": false,
+      "id": "1",
       "taken": true
     },
     {
@@ -40,17 +40,16 @@
       "taken": true
     },
     {
-      "id": "1ec8",
-      "drugName": "Sertralina ",
-      "description": "Antidepresivo",
-      "dosage": "200mg",
+      "id": "2c58",
+      "drugName": "Sumial",
+      "description": "Betabloqueante",
+      "dosage": "5mg",
       "frequencyHours": 8,
-      "nextIntakeTime": "02:51:00",
+      "nextIntakeTime": "09:00:00",
       "startDate": "2025-09-19",
       "endDate": "2025-12-31",
       "active": true,
-      "activeReminder": true,
-      "taken": true
+      "activeReminder": true
     }
   ]
 }
