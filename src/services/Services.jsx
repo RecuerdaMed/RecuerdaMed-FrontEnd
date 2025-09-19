@@ -1,129 +1,64 @@
-// Configuración base para backend Spring Boot
-const API_BASE = "http://localhost:8080";
+import axios from "axios";
 
-// Headers estándar para todas las requests
-const defaultHeaders = {
-  "Content-Type": "application/json",
-  Accept: "application/json",
-};
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080",
+  headers: { "Content-Type": "application/json" },
+});
 
-const handleResponse = async (response) => {
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `HTTP ${response.status}: ${errorText || response.statusText}`
-    );
-  }
+const API_PATH = "/medicamentos";
 
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return await response.json();
-  }
-
-  return await response.text();
-};
-
-/* GET de todas las medicaciones - endpoint /medicamentos */
 export const getAllDrugs = async () => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos`, {
-      method: "GET",
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error fetching drugs:', error);
-    return getMockDrugs();
-  }
+  const { data } = await api.get(API_PATH);
+  return data;
 };
 
-/* GET medicamento por ID */
-export const getDrugById = async (drugId) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}`, {
-      method: "GET",
-      headers: defaultHeaders,
-    });
+export const createDrug = async (payload) => {
+  const { data } = await api.post(API_PATH, payload);
+  return data;
+};
 
-    return await handleResponse(response);
+export const updateDrug = async (id, payload) => {
+  const { data } = await api.put(`${API_PATH}/${id}`, payload);
+  return data;
+};
+
+// PARA DESARROLLO CON JSON-SERVER
+export const markAsTaken = async (id) => {
+  try {
+    console.log('Marcando como tomado medicamento ID:', id);
+    const { data } = await api.patch(`${API_PATH}/${id}`, { taken: true });
+    console.log('Éxito al marcar como tomado');
+    return data;
   } catch (error) {
-    console.error('Error fetching drug by id:', error);
+    console.error('Error marking as taken:', error);
     throw error;
   }
 };
 
-/* Crear nueva medicación */
-export const createDrug = async (drugRequest) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos`, {
-      method: "POST",
-      headers: defaultHeaders,
-      body: JSON.stringify(drugRequest),
-    });
+// PARA BACKEND JAVA REAL (comentado por ahora)
+// export const markAsTaken = async (id) => {
+//   try {
+//     console.log('Marcando como tomado medicamento ID:', id);
+//     await api.put(`${API_PATH}/${id}/tomado`);
+//     console.log('Éxito al marcar como tomado');
+//   } catch (error) {
+//     console.error('Error marking as taken:', error);
+//     throw error;
+//   }
+// };
 
-    return await handleResponse(response);
+export const markAsNotTaken = async (id) => {
+  try {
+    console.log('Marcando como NO tomado:', id);
+    const { data } = await api.patch(`${API_PATH}/${id}`, { taken: false });
+    console.log('Éxito al marcar como NO tomado');
+    return data;
   } catch (error) {
-    console.error('Error creating drug:', error);
+    console.error('Error marking as not taken:', error);
     throw error;
   }
 };
 
-/* Actualizar medicación */
-export const updateDrug = async (drugId, drugRequest) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}`, {
-      method: 'PUT',
-      headers: defaultHeaders,
-      body: JSON.stringify(drugRequest),
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error updating drug:', error);
-    throw error;
-  }
-};
-
-/* Eliminar medicación */
-export const deleteDrug = async (drugId) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}`, {
-      method: 'DELETE',
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error deleting drug:', error);
-    throw error;
-  }
-};
-
-/* Marcar como tomada */
-export const markAsTaken = async (drugId) => {
-  try {
-    const response = await fetch(`${API_BASE}/medicamentos/${drugId}/taken`, {
-      method: 'PUT',
-      headers: defaultHeaders,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error('Error marking drug as taken:', error);
-    throw error;
-  }
-};
-
-// Mock data para desarrollo
-const getMockDrugs = () => {
-  return [
-    {
-      id: 1,
-      name: "Ibuprofeno",
-      dose: "500mg",
-      scheduledTime: "08:00",
-      status: "PENDING"
-    }
-  ];
+export const deleteDrug = async (id) => {
+  await api.delete(`${API_PATH}/${id}`);
 };
